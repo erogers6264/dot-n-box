@@ -23,10 +23,8 @@ class Game(ndb.Model):
     user = ndb.KeyProperty(required=True, kind='User')
 
     @classmethod
-    def new_game(cls, user, min, max, attempts):
+    def new_game(cls, user, attempts):
         """Creates and returns a new game"""
-        if max < min:
-            raise ValueError('Maximum must be greater than minimum')
         game = Game(user=user,
                     target=random.choice(range(1, max + 1)),
                     attempts_allowed=attempts,
@@ -80,9 +78,7 @@ class GameForm(messages.Message):
 class NewGameForm(messages.Message):
     """Used to create a new game"""
     user_name = messages.StringField(1, required=True)
-    min = messages.IntegerField(2, default=1)
-    max = messages.IntegerField(3, default=10)
-    attempts = messages.IntegerField(4, default=5)
+    attempts = messages.IntegerField(2, default=6)
 
 
 class MakeMoveForm(messages.Message):

@@ -58,8 +58,7 @@ class Jungmann(remote.Service):
             raise endpoints.NotFoundException(
                     'A User with that name does not exist!')
         try:
-            game = Game.new_game(user.key, request.min,
-                                 request.max, request.attempts)
+            game = Game.new_game(user.key, request.attempts)
         except ValueError:
             raise endpoints.BadRequestException('Maximum must be greater '
                                                 'than minimum!')

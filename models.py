@@ -27,7 +27,7 @@ class Game(ndb.Model):
         """Creates and returns a new game"""
         game = Game(user=user,
                     # TODO Make the target pick a random word from the bank.
-                    target=random.choice(range(1, max + 1)),
+                    target=random.choice(words),
                     attempts_allowed=attempts,
                     attempts_remaining=attempts,
                     game_over=False)

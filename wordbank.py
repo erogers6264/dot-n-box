@@ -17,5 +17,5 @@ words = ["sein", "haben", "werden", "koennen", "muessen", "sagen", "machen",
 "lesen", "verlieren", "darstellen", "erkennen", "entwickeln", "reden",
 "aussehen", "erscheinen", "bilden", "anfangen", "erwarten", "wohnen",
 "betreffen", "warten", "vergehen", "helfen", "gewinnen", "schliessen", "fuehlen",
-"bieten", "interessierento", "erinnern", "ergeben", "anbieten", "studieren",
+"bieten", "interessieren", "erinnern", "ergeben", "anbieten", "studieren",
 "verbinden", "ansehen", "fehlen", "bedeuten", "vergleichen"]

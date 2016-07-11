@@ -1,9 +1,6 @@
 from wordbank import randomWord
 
 
-
-
-
 def startGame():
 	attempts = input("How many attempts to guess would you like? ")
 	attempts_remaining = attempts
@@ -29,7 +26,7 @@ def makeMove():
 				print blanks
 			else:
 				attempts -= 1
-				print("Not in word")
+				print("Not in word. You have {} attempts remaining".format(attempts))
 
 
 def function():

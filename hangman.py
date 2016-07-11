@@ -1,6 +1,9 @@
 from wordbank import randomWord
 
+
 target = randomWord()
+
+
 attempts = input("How many attempts to guess would you like? ")
 attempts_remaining = attempts
 
@@ -12,9 +15,22 @@ def getGuess():
 	return guess
 
 
+def startGame():
+	pass
+
+
+def makeMove():
+	pass
+
+
+def function():
+	pass
+
+
 for x in xrange(1, attempts+1):
-	for i, c in enumerate(target):
-		if getGuess() == c:
+	g = getGuess()
+	for i, char in enumerate(target):
+		if g == char:
 			print True
 		else:
 			attempts -= 1

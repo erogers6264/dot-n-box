@@ -1,12 +1,15 @@
 from wordbank import randomWord
 
 
-target = randomWord()
-blanks = '*' * len(target)
 
 
-attempts = input("How many attempts to guess would you like? ")
-attempts_remaining = attempts
+
+def startGame():
+	attempts = input("How many attempts to guess would you like? ")
+	attempts_remaining = attempts
+	target = randomWord()
+	blanks = '*' * len(target)
+	incorrect_guesses = []
 
 
 def getGuess():
@@ -16,23 +19,19 @@ def getGuess():
 	return guess
 
 
-def startGame():
-	pass
-
-
 def makeMove():
-	pass
+	for x in xrange(1, attempts+1):
+		g = getGuess()
+		for i, char in enumerate(target):
+			if g == char:
+				print("OMG! That letter is in the word.")
+				blanks[i] = char
+				print blanks
+			else:
+				attempts -= 1
+				print("Not in word")
 
 
 def function():
 	pass
 
-
-for x in xrange(1, attempts+1):
-	g = getGuess()
-	for i, char in enumerate(target):
-		if g == char:
-			print True
-		else:
-			attempts -= 1
-			print False

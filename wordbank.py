@@ -4,6 +4,9 @@
 # user chosen category. Or something dynamic of that nature.
 #
 
+import random
+
+
 words = ["sein", "haben", "werden", "koennen", "muessen", "sagen", "machen",
 "geben", "kommen", "sollen", "wollen", "gehen", "wissen", "sehen", "lassen",
 "stehen", "finden", "bleiben", "liegen", "heissen", "denken", "nehmen", "tun",
@@ -19,3 +22,8 @@ words = ["sein", "haben", "werden", "koennen", "muessen", "sagen", "machen",
 "betreffen", "warten", "vergehen", "helfen", "gewinnen", "schliessen", "fuehlen",
 "bieten", "interessieren", "erinnern", "ergeben", "anbieten", "studieren",
 "verbinden", "ansehen", "fehlen", "bedeuten", "vergleichen"]
+
+
+def randomWord():
+	rw = random.choice(words)
+	return rw

@@ -6,7 +6,7 @@ import random
 from datetime import date
 from protorpc import messages
 from google.appengine.ext import ndb
-from wordbank import words
+from wordbank import randomWord
 
 class User(ndb.Model):
     """User profile"""
@@ -27,7 +27,7 @@ class Game(ndb.Model):
         """Creates and returns a new game"""
         game = Game(user=user,
                     # TODO Make the target pick a random word from the bank.
-                    target=random.choice(words),
+                    target=randomWord(),
                     attempts_allowed=attempts,
                     attempts_remaining=attempts,
                     game_over=False)

@@ -1,7 +1,6 @@
-import random
-from wordbank import words
+from wordbank import randomWord
 
-target = random.choice(words)
+target = randomWord()
 attempts = input("How many attempts to guess would you like? ")
 attempts_remaining = attempts
 

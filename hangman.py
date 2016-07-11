@@ -2,6 +2,7 @@ from wordbank import randomWord
 
 
 target = randomWord()
+blanks = '*' * len(target)
 
 
 attempts = input("How many attempts to guess would you like? ")

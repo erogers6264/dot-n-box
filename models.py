@@ -79,7 +79,7 @@ class GameForm(messages.Message):
 class NewGameForm(messages.Message):
     """Used to create a new game"""
     user_name = messages.StringField(1, required=True)
-    attempts = messages.IntegerField(2, default=5)
+    attempts = messages.IntegerField(2, default=6)
 
 
 class MakeMoveForm(messages.Message):

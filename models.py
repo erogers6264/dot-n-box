@@ -24,10 +24,8 @@ class Game(ndb.Model):
     user = ndb.KeyProperty(required=True, kind='User')
 
     @classmethod
-    def new_game(cls, user, min, max, attempts):
+    def new_game(cls, user, attempts):
         """Creates and returns a new game"""
-        if max < min:
-            raise ValueError('Maximum must be greater than minimum')
         game = Game(user=user,
                     target=randomWord(),
                     attempts_allowed=attempts,

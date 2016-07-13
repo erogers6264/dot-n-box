@@ -22,14 +22,18 @@ class Game(ndb.Model):
     attempts_remaining = ndb.IntegerProperty(required=True, default=5)
     game_over = ndb.BooleanProperty(required=True, default=False)
     user = ndb.KeyProperty(required=True, kind='User')
+    blanks = ndb.ListProperty(required=True)
+    already_guessed = ndb.ListProperty(required=True)
 
     @classmethod
     def new_game(cls, user, attempts):
         """Creates and returns a new game"""
         game = Game(user=user,
                     target=randomWord(),
+                    blanks = ['*' for char in target],
                     attempts_allowed=attempts,
                     attempts_remaining=attempts,
+                    already_guessed= [],
                     game_over=False)
         game.put()
         return game

@@ -7,6 +7,7 @@ blanks = ['*'] * len(target)
 attempts = input("How many attempts to guess would you like? (Max 15) ")
 attempts_remaining = attempts
 already_guessed = []
+game_over = False
 
 
 def getGuess():
@@ -38,6 +39,7 @@ def makeMove(attempts):
 				blanks[i] = g
 			print("You got one!")
 			print string.join(blanks, '')
+
 
 makeMove(attempts)
 

@@ -6,6 +6,7 @@ import random
 from datetime import date
 from protorpc import messages
 from google.appengine.ext import ndb
+from wordbank import randomWord
 
 
 class User(ndb.Model):
@@ -28,7 +29,7 @@ class Game(ndb.Model):
         if max < min:
             raise ValueError('Maximum must be greater than minimum')
         game = Game(user=user,
-                    target=random.choice(range(1, max + 1)),
+                    target=randomWord(),
                     attempts_allowed=attempts,
                     attempts_remaining=attempts,
                     game_over=False)

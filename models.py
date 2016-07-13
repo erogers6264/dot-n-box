@@ -16,7 +16,7 @@ class User(ndb.Model):
 
 class Game(ndb.Model):
     """Game object"""
-    target = ndb.IntegerProperty(required=True)
+    target = ndb.StringProperty(required=True)
     attempts_allowed = ndb.IntegerProperty(required=True)
     attempts_remaining = ndb.IntegerProperty(required=True, default=5)
     game_over = ndb.BooleanProperty(required=True, default=False)

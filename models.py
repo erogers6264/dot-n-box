@@ -22,14 +22,15 @@ class Game(ndb.Model):
     attempts_remaining = ndb.IntegerProperty(required=True, default=5)
     game_over = ndb.BooleanProperty(required=True, default=False)
     user = ndb.KeyProperty(required=True, kind='User')
-    blanks = ndb.ListProperty(required=True)
-    already_guessed = ndb.ListProperty(required=True)
+    blanks = ndb.JsonProperty(required=True)
+    already_guessed = ndb.JsonProperty(required=True)
 
     @classmethod
     def new_game(cls, user, attempts):
         """Creates and returns a new game"""
+        target = randomWord()
         game = Game(user=user,
-                    target=randomWord(),
+                    target=target,
                     blanks = ['*' for char in target],
                     attempts_allowed=attempts,
                     attempts_remaining=attempts,
@@ -88,7 +89,7 @@ class NewGameForm(messages.Message):
 
 class MakeMoveForm(messages.Message):
     """Used to make a move in an existing game"""
-    guess = messages.IntegerField(1, required=True)
+    guess = messages.StringField(1, required=True)
 
 
 class ScoreForm(messages.Message):

@@ -15,7 +15,6 @@ from models import User, Game, Score
 from models import StringMessage, NewGameForm, GameForm, MakeMoveForm,\
 	ScoreForms
 from utils import get_by_urlsafe
-from wordbank import words
 
 
 NEW_GAME_REQUEST = endpoints.ResourceContainer(NewGameForm)
@@ -89,10 +88,6 @@ class HangmanAPI(remote.Service):
 		game = get_by_urlsafe(request.urlsafe_game_key, Game)
 		if game.game_over:
 			return game.to_form('Game already over!')
-		
-		if string.join(game.blanks, '') == game.target:
-			game.end_game(True)
-			return game.to_form('You win!')
 
 		indexes_of_correct = [i for i, g in enumerate(game.target)\
 							  if g == request.guess]
@@ -107,6 +102,10 @@ class HangmanAPI(remote.Service):
 				game.blanks[i] = request.guess
 			msg = string.join(game.blanks, '')
 			msg += ' You got one!'
+		
+		if string.join(game.blanks, '') == game.target:
+			game.end_game(True)
+			return game.to_form('You win!')
 
 		if game.attempts_remaining < 1:
 			game.end_game(False)

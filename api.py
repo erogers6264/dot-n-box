@@ -4,7 +4,7 @@ This can also contain game logic. For more complex games it would be wise to
 move game logic to another file. Ideally the API will be simple, concerned
 primarily with communication to/from the API's users."""
 
-
+import string
 import logging
 import endpoints
 from protorpc import remote, messages
@@ -87,16 +87,24 @@ class HangmanAPI(remote.Service):
         game = get_by_urlsafe(request.urlsafe_game_key, Game)
         if game.game_over:
             return game.to_form('Game already over!')
-
-        game.attempts_remaining -= 1
-        if request.guess == game.target:
+        
+        if string.join(game.blanks, '') == game.target:
             game.end_game(True)
             return game.to_form('You win!')
 
-        if request.guess < game.target:
-            msg = 'Too low!'
+        indexes_of_correct = [i for i, g in enumerate(game.target)\
+                              if g == request.guess]
+
+        if not indexes_of_correct:
+            game.attempts_remaining -= 1
+            msg = string.join(game.blanks, '')
+            msg = ' Not in word. You have {} attempts remaining'.format(
+                        game.attempts_remaining)
         else:
-            msg = 'Too high!'
+            for i in indexes_of_correct:
+                game.blanks[i] = request.guess
+            msg = string.join(game.blanks, '')
+            msg += ' You got one!'
 
         if game.attempts_remaining < 1:
             game.end_game(False)

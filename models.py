@@ -7,6 +7,8 @@ from datetime import date
 from protorpc import messages
 from google.appengine.ext import ndb
 from wordbank import randomWord
+from wordbank import randomWord
+
 
 class User(ndb.Model):
     """User profile"""
@@ -21,15 +23,19 @@ class Game(ndb.Model):
     attempts_remaining = ndb.IntegerProperty(required=True, default=6)
     game_over = ndb.BooleanProperty(required=True, default=False)
     user = ndb.KeyProperty(required=True, kind='User')
+    blanks = ndb.JsonProperty(required=True)
+    already_guessed = ndb.JsonProperty(required=True)
 
     @classmethod
     def new_game(cls, user, attempts):
         """Creates and returns a new game"""
+        target = randomWord()
         game = Game(user=user,
-                    # TODO Make the target pick a random word from the bank.
-                    target=randomWord(),
+                    target=target,
+                    blanks = ['*' for char in target],
                     attempts_allowed=attempts,
                     attempts_remaining=attempts,
+                    already_guessed= [],
                     game_over=False)
         game.put()
         return game
@@ -84,7 +90,7 @@ class NewGameForm(messages.Message):
 
 class MakeMoveForm(messages.Message):
     """Used to make a move in an existing game"""
-    guess = messages.IntegerField(1, required=True)
+    guess = messages.StringField(1, required=True)
 
 
 class ScoreForm(messages.Message):

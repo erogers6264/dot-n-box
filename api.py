@@ -12,7 +12,7 @@ from google.appengine.api import memcache
 from google.appengine.api import taskqueue
 
 from models import User, Game, Score
-from models import StringMessage, NewGameForm, GameForm, MakeMoveForm,\
+from models import StringMessage, NewGameForm, GameForm, GameForms, MakeMoveForm,\
 	ScoreForms
 from utils import get_by_urlsafe
 
@@ -84,7 +84,13 @@ class HangmanAPI(remote.Service):
 					  name='get_user_games',
 					  http_method='GET')
 	def get_user_games(self, request):
-		pass
+		"""Returns all of an individual User's games"""
+		user = User.query(User.name == request.user_name).get()
+		if not user:
+			raise endpoints.NotFoundException(
+					'A User with that name unfortunately does not exist!')
+		games = Game.query(Game.user == user.key)
+		return GameForms(items=[game.to_form() for game in games])
 
 	@endpoints.method(request_message=MAKE_MOVE_REQUEST,
 					  response_message=GameForm,

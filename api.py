@@ -78,6 +78,14 @@ class HangmanAPI(remote.Service):
 		else:
 			raise endpoints.NotFoundException('Game not found!')
 
+	@endpoints.method(request_message=GET_GAME_REQUEST,
+					  response_message=GameForm,
+					  path='game/user/{user_name}',
+					  name='get_user_games',
+					  http_method='GET')
+	def get_user_games(self, request):
+		pass
+
 	@endpoints.method(request_message=MAKE_MOVE_REQUEST,
 					  response_message=GameForm,
 					  path='game/{urlsafe_game_key}',

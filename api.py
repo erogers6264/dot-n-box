@@ -20,6 +20,9 @@ from utils import get_by_urlsafe
 NEW_GAME_REQUEST = endpoints.ResourceContainer(NewGameForm)
 GET_GAME_REQUEST = endpoints.ResourceContainer(
 		urlsafe_game_key=messages.StringField(1),)
+CANCEL_GAME_REQUEST = endpoints.ResourceContainer(
+		user_name=messages.StringField(1),
+		urlsafe_game_key=messages.StringField(2))
 MAKE_MOVE_REQUEST = endpoints.ResourceContainer(
 	MakeMoveForm,
 	urlsafe_game_key=messages.StringField(1),)
@@ -78,13 +81,27 @@ class HangmanAPI(remote.Service):
 		else:
 			raise endpoints.NotFoundException('Game not found!')
 
-	@endpoints.method(request_message=GET_GAME_REQUEST,
+
+	@endpoints.method(request_message=CANCEL_GAME_REQUEST,
 					  response_message=GameForm,
 					  path='game/{urlsafe_game_key}',
 					  name='cancel_game',
 					  http_method='POST')
 	def cancel_game(self, request):
-		pass
+		"""Cancel a user's active game."""
+		user = User.query(User.name == request.user_name)
+		game = get_by_urlsafe(request.urlsafe_game_key, Game)
+		if not user:
+			raise endpoints.NotFoundException(
+					'A user with that name unfortunately does not exist!')
+		print(user == game.user) # debug, remove later
+		if user != game.user:
+			raise endpoints.ForbiddenException(
+					'You cannot delete a game that is not your own!')
+		else:
+			game.delete()
+		return game.to_form('This game has been deleted.')
+
 
 	@endpoints.method(request_message=USER_REQUEST,
 					  response_message=GameForms,
@@ -92,13 +109,14 @@ class HangmanAPI(remote.Service):
 					  name='get_user_games',
 					  http_method='GET')
 	def get_user_games(self, request):
-		"""Returns all of an individual User's games"""
+		"""Returns all of an individual User's games."""
 		user = User.query(User.name == request.user_name).get()
 		if not user:
 			raise endpoints.NotFoundException(
 					'A User with that name unfortunately does not exist!')
 		games = Game.query(Game.user == user.key)
-		return GameForms(items=[game.to_form(message="Here are the games.") for game in games])
+		return GameForms(items=[game.to_form(message="Here are the games.")\
+						 		for game in games])
 
 	@endpoints.method(request_message=MAKE_MOVE_REQUEST,
 					  response_message=GameForm,

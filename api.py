@@ -90,7 +90,7 @@ class HangmanAPI(remote.Service):
 			raise endpoints.NotFoundException(
 					'A User with that name unfortunately does not exist!')
 		games = Game.query(Game.user == user.key)
-		return GameForms(items=[game.to_form() for game in games])
+		return GameForms(items=[game.to_form(message="Here are the games.") for game in games])
 
 	@endpoints.method(request_message=MAKE_MOVE_REQUEST,
 					  response_message=GameForm,

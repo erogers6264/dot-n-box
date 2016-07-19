@@ -91,7 +91,7 @@ class HangmanAPI(remote.Service):
 		user = User.query(User.name == request.user_name).get()
 		game = get_by_urlsafe(request.urlsafe_game_key, Game)
 		if game.game_over:
-			return game.to_form('Game already over!')
+			return game.to_form('This game is already over!')
 		if not user:
 			raise endpoints.NotFoundException(
 					'A user with that name does not exist!')
@@ -99,7 +99,10 @@ class HangmanAPI(remote.Service):
 			raise endpoints.ForbiddenException(
 					'You cannot cancel a game that is not your own!')
 		else:
-			game.game_over = True
+			# Cancelled games can't be on the 'leaderboard'.
+			game.attempts_remaining = -99
+
+			game.end_game()
 			game.key.delete()
 		return game.to_form('This game has been canceled.')
 
@@ -176,23 +179,18 @@ class HangmanAPI(remote.Service):
 		scores = Score.query(Score.user == user.key)
 		return ScoreForms(items=[score.to_form() for score in scores])
 
-
-#  - **get_high_scores**     - Remember how you defined a score in Task 2?     Now
-# we will use that to generate a list of high scores in descending order, a
-# leader-board!     - Accept an optional parameter `number_of_results` that limits
-# the number of results returned.     - Note: If you choose to implement a
-# 2-player game this endpoint is not required.
-
-
-# 	@endpoints.method(request_message=message_types.VoidMessage,
-# 					  response_message=ScoreForms,
-# 					  path='highscores',
-# 					  name='get_high_scores',
-# 					  http_method='GET')
-# 	def get_high_scores(self, request):
-# 		"""Returns the top scores in decending order."""
-# 		pass
-
+	@endpoints.method(request_message=message_types.VoidMessage,
+					  response_message=ScoreForms,
+					  path='highscores',
+					  name='get_high_scores',
+					  http_method='GET')
+	def get_high_scores(self, request):
+		"""Returns the top scores in decending order.
+		TODO: Add a param number_of_results to limit
+		returned results."""
+		highscores = Score.query().order(Score.incorrect_guesses).fetch()
+		return ScoreForms(items=[highscore.to_form() for\
+								 highscore in highscores])
 
 # #  - **get_user_rankings**     - Come up with a method for ranking the performance
 # # of each player.       For "Guess a Number" this could be by winning percentage

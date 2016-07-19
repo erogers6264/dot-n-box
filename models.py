@@ -35,7 +35,7 @@ class Game(ndb.Model):
                     blanks=['*' for char in target],
                     attempts_allowed=attempts,
                     attempts_remaining=attempts,
-                    already_guessed= [],
+                    already_guessed=[],
                     game_over=False)
         game.put()
         return game

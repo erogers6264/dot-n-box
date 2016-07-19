@@ -182,55 +182,55 @@ class HangmanAPI(remote.Service):
 # 2-player game this endpoint is not required.
 
 
-	@endpoints.method(request_message=message_types.VoidMessage,
-					  response_message=ScoreForms,
-					  path='highscores',
-					  name='get_high_scores',
-					  http_method='GET')
-	def get_high_scores(self, request):
-		"""Returns the top scores in decending order."""
-		pass
+# 	@endpoints.method(request_message=message_types.VoidMessage,
+# 					  response_message=ScoreForms,
+# 					  path='highscores',
+# 					  name='get_high_scores',
+# 					  http_method='GET')
+# 	def get_high_scores(self, request):
+# 		"""Returns the top scores in decending order."""
+# 		pass
 
 
-#  - **get_user_rankings**     - Come up with a method for ranking the performance
-# of each player.       For "Guess a Number" this could be by winning percentage
-# with ties broken by the average number of guesses.     - Create an endpoint that
-# returns this player ranking. The results should include each Player's name and
-# the 'performance' indicator (eg. win/loss ratio).
+# #  - **get_user_rankings**     - Come up with a method for ranking the performance
+# # of each player.       For "Guess a Number" this could be by winning percentage
+# # with ties broken by the average number of guesses.     - Create an endpoint that
+# # returns this player ranking. The results should include each Player's name and
+# # the 'performance' indicator (eg. win/loss ratio).
 
 
-	@endpoints.method(request_message=message_types.VoidMessage,
-					  response_message=ScoreForms,
-					  path='rankings/user/{user_name}',
-					  name='get_user_rankings',
-					  http_method='GET')
-	def get_user_rankings(self, request):
-		"""Returns the top scores in decending order."""
-		pass
+# 	@endpoints.method(request_message=message_types.VoidMessage,
+# 					  response_message=ScoreForms,
+# 					  path='rankings/user/{user_name}',
+# 					  name='get_user_rankings',
+# 					  http_method='GET')
+# 	def get_user_rankings(self, request):
+# 		"""Returns the top scores in decending order."""
+# 		pass
 
  
-#  - **get_game_history**     - Your API Users may want to be able to see a
-# 'history' of moves for each game.     - For example, Chess uses a format called
-# <a href="https://en.wikipedia.org/wiki/Portable_Game_Notation"
-# target="_blank">PGN</a>) which allows any game to be replayed and watched move
-# by move.     - Add the capability for a Game's history to be presented in a
-# similar way. For example: If a User made played 'Guess a Number' with the moves:
-# (5, 8, 7), and received messages such as: ('Too low!', 'Too high!',     'You
-# win!'), an endpoint exposing the game_history might produce something like:
-# [('Guess': 5, result: 'Too low'), ('Guess': 8, result: 'Too high'),
-# ('Guess': 7, result: 'Win. Game over')].     - Adding this functionality will
-# require some additional properties in the 'Game' model along with a Form, and
-# endpoint to present the data to the User.
+# #  - **get_game_history**     - Your API Users may want to be able to see a
+# # 'history' of moves for each game.     - For example, Chess uses a format called
+# # <a href="https://en.wikipedia.org/wiki/Portable_Game_Notation"
+# # target="_blank">PGN</a>) which allows any game to be replayed and watched move
+# # by move.     - Add the capability for a Game's history to be presented in a
+# # similar way. For example: If a User made played 'Guess a Number' with the moves:
+# # (5, 8, 7), and received messages such as: ('Too low!', 'Too high!',     'You
+# # win!'), an endpoint exposing the game_history might produce something like:
+# # [('Guess': 5, result: 'Too low'), ('Guess': 8, result: 'Too high'),
+# # ('Guess': 7, result: 'Win. Game over')].     - Adding this functionality will
+# # require some additional properties in the 'Game' model along with a Form, and
+# # endpoint to present the data to the User.
 
 
-	@endpoints.method(request_message=message_types.VoidMessage,
-					  response_message=GameForms,
-					  path='game/history/user/{user_name}',
-					  name='get_game_history',
-					  http_method='GET')
-	def get_game_history(self, request):
-		"""Returns the top scores in decending order."""
-		pass
+# 	@endpoints.method(request_message=message_types.VoidMessage,
+# 					  response_message=GameForms,
+# 					  path='game/history/user/{user_name}',
+# 					  name='get_game_history',
+# 					  http_method='GET')
+# 	def get_game_history(self, request):
+# 		"""Returns the top scores in decending order."""
+# 		pass
 
 
 # ----------------------------------------------------------------------------

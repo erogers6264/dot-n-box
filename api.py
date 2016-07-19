@@ -81,7 +81,6 @@ class HangmanAPI(remote.Service):
 		else:
 			raise endpoints.NotFoundException('Game not found!')
 
-
 	@endpoints.method(request_message=CANCEL_GAME_REQUEST,
 					  response_message=GameForm,
 					  path='game/{urlsafe_game_key}',
@@ -89,19 +88,18 @@ class HangmanAPI(remote.Service):
 					  http_method='POST')
 	def cancel_game(self, request):
 		"""Cancel a user's active game."""
-		user = User.query(User.name == request.user_name)
+		user = User.query(User.name == request.user_name).get()
 		game = get_by_urlsafe(request.urlsafe_game_key, Game)
 		if not user:
 			raise endpoints.NotFoundException(
 					'A user with that name unfortunately does not exist!')
-		print(user == game.user) # debug, remove later
-		if user != game.user:
+		if user.key != game.user:
 			raise endpoints.ForbiddenException(
 					'You cannot delete a game that is not your own!')
 		else:
-			game.delete()
+			game.game_over = True
+			game.key.delete()
 		return game.to_form('This game has been deleted.')
-
 
 	@endpoints.method(request_message=USER_REQUEST,
 					  response_message=GameForms,

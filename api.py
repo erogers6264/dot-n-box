@@ -184,7 +184,7 @@ class HangmanAPI(remote.Service):
 
 	@endpoints.method(request_message=message_types.VoidMessage,
 					  response_message=ScoreForms,
-					  path='scores',
+					  path='highscores',
 					  name='get_high_scores',
 					  http_method='GET')
 	def get_high_scores(self, request):
@@ -201,7 +201,7 @@ class HangmanAPI(remote.Service):
 
 	@endpoints.method(request_message=message_types.VoidMessage,
 					  response_message=ScoreForms,
-					  path='scores',
+					  path='rankings/user/{user_name}',
 					  name='get_user_rankings',
 					  http_method='GET')
 	def get_user_rankings(self, request):
@@ -225,7 +225,7 @@ class HangmanAPI(remote.Service):
 
 	@endpoints.method(request_message=message_types.VoidMessage,
 					  response_message=GameForms,
-					  path='game',
+					  path='game/history/user/{user_name}',
 					  name='get_game_history',
 					  http_method='GET')
 	def get_game_history(self, request):

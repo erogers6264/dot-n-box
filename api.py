@@ -198,14 +198,14 @@ class HangmanAPI(remote.Service):
 # # the 'performance' indicator (eg. win/loss ratio).
 
 
-# 	@endpoints.method(request_message=message_types.VoidMessage,
-# 					  response_message=ScoreForms,
-# 					  path='rankings/user/{user_name}',
-# 					  name='get_user_rankings',
-# 					  http_method='GET')
-# 	def get_user_rankings(self, request):
-# 		"""Returns the top scores in decending order."""
-# 		pass
+	@endpoints.method(request_message=message_types.VoidMessage,
+					  response_message=ScoreForms,
+					  path='rankings/user/{user_name}',
+					  name='get_user_rankings',
+					  http_method='GET')
+	def get_user_rankings(self, request):
+		"""Returns the top scores in decending order."""
+		pass
 
  
 # #  - **get_game_history**     - Your API Users may want to be able to see a

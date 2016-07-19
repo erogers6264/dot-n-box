@@ -99,9 +99,8 @@ class HangmanAPI(remote.Service):
 			raise endpoints.ForbiddenException(
 					'You cannot cancel a game that is not your own!')
 		else:
-			# Cancelled games can't be on the 'leaderboard'.
+			# Cancelled games can't be high on the 'leaderboard'.
 			game.attempts_remaining = -99
-
 			game.end_game()
 			game.key.delete()
 		return game.to_form('This game has been canceled.')

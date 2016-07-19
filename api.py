@@ -101,7 +101,7 @@ class HangmanAPI(remote.Service):
 		else:
 			# Cancelled games can't be high on the 'leaderboard'.
 			game.attempts_remaining = -99
-			game.end_game()
+			game.end_game(False)
 			game.key.delete()
 		return game.to_form('This game has been canceled.')
 
@@ -204,7 +204,7 @@ class HangmanAPI(remote.Service):
 					  name='get_user_rankings',
 					  http_method='GET')
 	def get_user_rankings(self, request):
-		"""Returns the top scores in decending order."""
+		"""Returns the performance of the player."""
 		pass
 
  

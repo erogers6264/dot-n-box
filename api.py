@@ -184,14 +184,17 @@ class HangmanAPI(remote.Service):
 # 2-player game this endpoint is not required.
 
 
-# 	@endpoints.method(request_message=message_types.VoidMessage,
-# 					  response_message=ScoreForms,
-# 					  path='highscores',
-# 					  name='get_high_scores',
-# 					  http_method='GET')
-# 	def get_high_scores(self, request):
-# 		"""Returns the top scores in decending order."""
-# 		pass
+	@endpoints.method(request_message=message_types.VoidMessage,
+					  response_message=ScoreForms,
+					  path='highscores',
+					  name='get_high_scores',
+					  http_method='GET')
+	def get_high_scores(self, request):
+		"""Returns the top scores in decending order.
+		TODO: Add a param number_of_results to limit
+		returned results."""
+		highscores = Score.query(Score)
+		return ScoreForms(items=[])
 
 
 # #  - **get_user_rankings**     - Come up with a method for ranking the performance

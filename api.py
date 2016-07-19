@@ -174,6 +174,29 @@ class HangmanAPI(remote.Service):
 		scores = Score.query(Score.user == user.key)
 		return ScoreForms(items=[score.to_form() for score in scores])
 
+
+ # - **get_high_scores**
+ #    - Remember how you defined a score in Task 2?
+ #    Now we will use that to generate a list of high scores in descending order, a leader-board!
+ #    - Accept an optional parameter `number_of_results` that limits the number of results returned.
+ #    - Note: If you choose to implement a 2-player game this endpoint is not required.
+    
+ # - **get_user_rankings**
+ #    - Come up with a method for ranking the performance of each player.
+ #      For "Guess a Number" this could be by winning percentage with ties broken by the average number of guesses.
+ #    - Create an endpoint that returns this player ranking. The results should include each Player's name and the 'performance' indicator (eg. win/loss ratio).
+ 
+ # - **get_game_history**
+ #    - Your API Users may want to be able to see a 'history' of moves for each game.
+ #    - For example, Chess uses a format called <a href="https://en.wikipedia.org/wiki/Portable_Game_Notation" target="_blank">PGN</a>) which allows any game to be replayed and watched move by move.
+ #    - Add the capability for a Game's history to be presented in a similar way. For example: If a User made played 'Guess a Number' with the moves:
+ #    (5, 8, 7), and received messages such as: ('Too low!', 'Too high!',
+ #    'You win!'), an endpoint exposing the game_history might produce something like:
+ #    [('Guess': 5, result: 'Too low'), ('Guess': 8, result: 'Too high'),
+ #    ('Guess': 7, result: 'Win. Game over')].
+ #    - Adding this functionality will require some additional properties in the 'Game' model along with a Form, and endpoint to present the data to the User.
+
+
 	@endpoints.method(response_message=StringMessage,
 					  path='games/average_attempts',
 					  name='get_average_attempts_remaining',

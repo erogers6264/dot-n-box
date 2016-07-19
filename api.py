@@ -90,6 +90,8 @@ class HangmanAPI(remote.Service):
 		"""Cancel a user's active game."""
 		user = User.query(User.name == request.user_name).get()
 		game = get_by_urlsafe(request.urlsafe_game_key, Game)
+		if game.game_over:
+			return game.to_form('Game already over!')
 		if not user:
 			raise endpoints.NotFoundException(
 					'A user with that name does not exist!')

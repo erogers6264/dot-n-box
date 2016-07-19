@@ -13,7 +13,7 @@ from wordbank import randomWord
 class User(ndb.Model):
     """User profile"""
     name = ndb.StringProperty(required=True)
-    email =ndb.StringProperty()
+    email = ndb.StringProperty()
 
 
 class Game(ndb.Model):
@@ -32,13 +32,14 @@ class Game(ndb.Model):
         target = randomWord()
         game = Game(user=user,
                     target=target,
-                    blanks = ['*' for char in target],
+                    blanks=['*' for char in target],
                     attempts_allowed=attempts,
                     attempts_remaining=attempts,
                     already_guessed= [],
                     game_over=False)
         game.put()
         return game
+
 
     def to_form(self, message):
         """Returns a GameForm representation of the Game"""

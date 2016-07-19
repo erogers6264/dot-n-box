@@ -62,6 +62,14 @@ class Game(ndb.Model):
         score.put()
 
 
+class Ranking(ndb.Model):
+    """Ranking object"""
+    user = ndb.KeyProperty(required=True, kind='User')
+    scores = ndb.JsonProperty(required=True)
+    wins = ndb.IntegerProperty(required=True)    
+    avg_wins = ndb.IntegerProperty(required=True)     
+
+
 class Score(ndb.Model):
     """Score object"""
     user = ndb.KeyProperty(required=True, kind='User')

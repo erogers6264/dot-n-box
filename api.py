@@ -209,7 +209,7 @@ class HangmanAPI(remote.Service):
 			raise endpoints.NotFoundException(
 					'A User with that name does not exist!')
 		scores = Score.query(Score.user == user.key).fetch()
-		print [score for score in scores]
+		print([score for score in scores])
 
  
 

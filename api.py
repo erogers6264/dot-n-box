@@ -203,13 +203,21 @@ class HangmanAPI(remote.Service):
 					  name='get_user_rankings',
 					  http_method='GET')
 	def get_user_rankings(self, request):
-		"""Returns the performance of the player."""
+		"""Returns the performance of the player as a Ranking."""
 		user = User.query(User.name == request.user_name).get()
 		if not user:
 			raise endpoints.NotFoundException(
 					'A User with that name does not exist!')
+		
 		scores = Score.query(Score.user == user.key).fetch()
-		print([score for score in scores])
+		if not scores:
+			raise endpoints.NotFoundException(
+					'No scores were found for that user!')
+		
+		wins = sum(s.won == True for s in scores)
+		percent_won = (float(wins)/len(scores)) * 100
+		number_of_guesses = sum(score.incorrect_guesses for score in scores)
+		avg_guesses = float(number_of_guesses)/len(scores)
 
  
 

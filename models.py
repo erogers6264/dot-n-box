@@ -68,17 +68,17 @@ class Ranking(ndb.Model):
     user = ndb.KeyProperty(required=True, kind='User')
     scores = ndb.JsonProperty(required=True)
     wins = ndb.IntegerProperty(required=True)    
-    avg_wins = ndb.FloatProperty(required=True) 
+    percent_won = ndb.FloatProperty(required=True) 
     avg_guesses = ndb.FloatProperty(required=True)   
 
     def to_form(self, message):
          form = RankingForm()
          form.user_name = self.user.get().name
-         form.date = date.today()
          form.wins = self.wins
-         form.avg_wins = self.avg_wins
+         form.percent_won = self.percent_won
          form.avg_guesses = self.avg_guesses
          form.message = message
+         return form
 
 
 
@@ -135,11 +135,10 @@ class ScoreForms(messages.Message):
 class RankingForm(messages.Message):
     """Ranking Form for outbound Ranking information"""
     user_name = messages.StringField(1, required=True)
-    date = messages.StringField(2, required=True)
-    wins = messages.IntegerField(3)
-    avg_wins = messages.FloatField(4)
-    avg_guesses = messages.FloatField(5)
-    message = messages.StringField(6)
+    wins = messages.IntegerField(2)
+    percent_won = messages.FloatField(3)
+    avg_guesses = messages.FloatField(4)
+    message = messages.StringField(5)
 
 
 class RankingForms(messages.Message):

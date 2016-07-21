@@ -11,9 +11,9 @@ from protorpc import remote, messages, message_types
 from google.appengine.api import memcache
 from google.appengine.api import taskqueue
 
-from models import User, Game, Score
+from models import User, Game, Score, Ranking
 from models import StringMessage, NewGameForm, GameForm, GameForms, MakeMoveForm,\
-	ScoreForms
+	ScoreForms, RankingForm, RankingForms
 from utils import get_by_urlsafe
 
 
@@ -197,12 +197,12 @@ class HangmanAPI(remote.Service):
 # # the 'performance' indicator (eg. win/loss ratio).
 
 
-	@endpoints.method(request_message=message_types.VoidMessage,
-					  response_message=ScoreForms,
+	@endpoints.method(request_message=USER_REQUEST,
+					  response_message=RankingForm,
 					  path='ranking/user/{user_name}',
-					  name='get_user_rankings',
+					  name='get_user_ranking',
 					  http_method='GET')
-	def get_user_rankings(self, request):
+	def get_user_ranking(self, request):
 		"""Returns the performance of the player as a Ranking."""
 		user = User.query(User.name == request.user_name).get()
 		if not user:
@@ -218,6 +218,17 @@ class HangmanAPI(remote.Service):
 		percent_won = (float(wins)/len(scores)) * 100
 		number_of_guesses = sum(score.incorrect_guesses for score in scores)
 		avg_guesses = float(number_of_guesses)/len(scores)
+
+		ranking = Ranking.query(Ranking.user == user.key).get()
+		if not ranking:
+			ranking = Ranking(user=user,
+							  scores=scores,
+							  wins=wins,
+							  percent_won=percent_won,
+							  avg_guesses=avg_guesses)
+			ranking.put()
+		return ranking.to_form("This is the ranking for {}".format(user.name))
+
 
  
 

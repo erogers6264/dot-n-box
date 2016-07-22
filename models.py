@@ -8,7 +8,6 @@ from datetime import date
 from protorpc import messages
 from google.appengine.ext import ndb
 from wordbank import randomWord
-from wordbank import randomWord
 
 
 class User(ndb.Model):
@@ -66,20 +65,28 @@ class Game(ndb.Model):
 class Ranking(ndb.Model):
     """Ranking object"""
     user = ndb.KeyProperty(required=True, kind='User')
-    scores = ndb.JsonProperty(required=True)
     wins = ndb.IntegerProperty(required=True)    
     percent_won = ndb.FloatProperty(required=True) 
-    avg_guesses = ndb.FloatProperty(required=True)   
+    avg_incorrect_guesses = ndb.FloatProperty(required=True)   
+
+    @classmethod
+    def new_ranking(cls, user, wins, percent_won, avg_incorrect_guesses):
+        """Creates and returns a new ranking"""
+        ranking = Ranking(user=user,
+                          wins=wins,
+                          percent_won=percent_won,
+                          avg_incorrect_guesses=avg_incorrect_guesses)
+        ranking.put()
+        return ranking
 
     def to_form(self, message):
          form = RankingForm()
          form.user_name = self.user.get().name
          form.wins = self.wins
          form.percent_won = self.percent_won
-         form.avg_guesses = self.avg_guesses
+         form.avg_incorrect_guesses = self.avg_incorrect_guesses
          form.message = message
          return form
-
 
 
 class Score(ndb.Model):
@@ -137,10 +144,10 @@ class RankingForm(messages.Message):
     user_name = messages.StringField(1, required=True)
     wins = messages.IntegerField(2)
     percent_won = messages.FloatField(3)
-    avg_guesses = messages.FloatField(4)
+    avg_incorrect_guesses = messages.FloatField(4)
     message = messages.StringField(5)
 
-
+ 
 class RankingForms(messages.Message):
     """Return multiple Ranking forms"""
     items = messages.MessageField(RankingForm, 1, repeated=True)

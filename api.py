@@ -217,17 +217,21 @@ class HangmanAPI(remote.Service):
 		wins = sum(s.won == True for s in scores)
 		percent_won = (float(wins)/len(scores)) * 100
 		number_of_guesses = sum(score.incorrect_guesses for score in scores)
-		avg_guesses = float(number_of_guesses)/len(scores)
+		avg_incorrect_guesses = float(number_of_guesses)/len(scores)
 
 		ranking = Ranking.query(Ranking.user == user.key).get()
-		if not ranking:
-			ranking = Ranking(user=user,
-							  scores=scores,
-							  wins=wins,
-							  percent_won=percent_won,
-							  avg_guesses=avg_guesses)
+		if ranking:
+			ranking.wins = wins
+			ranking.percent_won = percent_won
+			ranking.avg_incorrect_guesses = avg_incorrect_guesses
 			ranking.put()
-		return ranking.to_form("This is the ranking for {}".format(user.name))
+			return ranking.to_form("Ranking has been updated for {}".format(user.name))
+		else:
+			ranking = Ranking.new_ranking(user=user.key,
+										  wins=wins,
+										  percent_won=percent_won,
+										  avg_incorrect_guesses=avg_incorrect_guesses)
+			return ranking.to_form("Ranking created for {}".format(user.name))
 
 
  

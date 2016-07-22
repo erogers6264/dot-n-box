@@ -13,7 +13,7 @@ from google.appengine.api import taskqueue
 
 from models import User, Game, Score, Ranking
 from models import StringMessage, NewGameForm, GameForm, GameForms, MakeMoveForm,\
-	ScoreForms, RankingForm, RankingForms
+	ScoreForms, RankingForm, RankingForms, HistoryForm
 from utils import get_by_urlsafe
 
 
@@ -243,14 +243,14 @@ class HangmanAPI(remote.Service):
 	@endpoints.method(request_message=USER_REQUEST,
 					  response_message=HistoryForm,
 					  path='history/game/{urlsafe_game_key}',
-					  name='get_game_history'
-					  http_method=GET)
+					  name='get_game_history',
+					  http_method='GET')
 	def get_game_history(self, request):
 		"""Produces a history of the guesses of a game."""
         # Maybe like this? [('Guess': 'i, 'board': '****i**', 'incorrect': ['a', 'p', 'k']),
         				#   ('Guess': 'e', 'board': '*e**ie*', 'incorrect': ['a', 'p', 'k'])]
         				#   ('Guess': 't', 'board': '*e**ie*', 'incorrect': ['a', 'p', 'k', 't'])]
-
+		game = get_by_urlsafe(request.urlsafe_game_key, Game)
 
 
 # ----------------------------------------------------------------------------
@@ -271,7 +271,7 @@ class HangmanAPI(remote.Service):
 		if games:
 			count = len(games)
 			total_attempts_remaining = sum([game.attempts_remaining
-										for game in games])
+											for game in games])
 			average = float(total_attempts_remaining)/count
 			memcache.set(MEMCACHE_MOVES_REMAINING,
 						 'The average moves remaining is {:.2f}'.format(average))

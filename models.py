@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-`
 """models.py - This file contains the class definitions for the Datastore
 entities used by the Game. Because these classes are also regular Python
 classes they can include methods (such as 'to_form' and 'new_game')."""
@@ -6,7 +7,6 @@ import random
 from datetime import date
 from protorpc import messages
 from google.appengine.ext import ndb
-from wordbank import randomWord
 from wordbank import randomWord
 
 
@@ -62,6 +62,33 @@ class Game(ndb.Model):
         score.put()
 
 
+class Ranking(ndb.Model):
+    """Ranking object"""
+    user = ndb.KeyProperty(required=True, kind='User')
+    wins = ndb.IntegerProperty(required=True)    
+    percent_won = ndb.FloatProperty(required=True) 
+    avg_incorrect_guesses = ndb.FloatProperty(required=True)   
+
+    @classmethod
+    def new_ranking(cls, user, wins, percent_won, avg_incorrect_guesses):
+        """Creates and returns a new ranking"""
+        ranking = Ranking(user=user,
+                          wins=wins,
+                          percent_won=percent_won,
+                          avg_incorrect_guesses=avg_incorrect_guesses)
+        ranking.put()
+        return ranking
+
+    def to_form(self, message):
+         form = RankingForm()
+         form.user_name = self.user.get().name
+         form.wins = self.wins
+         form.percent_won = self.percent_won
+         form.avg_incorrect_guesses = self.avg_incorrect_guesses
+         form.message = message
+         return form
+
+
 class Score(ndb.Model):
     """Score object"""
     user = ndb.KeyProperty(required=True, kind='User')
@@ -110,6 +137,20 @@ class ScoreForm(messages.Message):
 class ScoreForms(messages.Message):
     """Return multiple ScoreForms"""
     items = messages.MessageField(ScoreForm, 1, repeated=True)
+
+
+class RankingForm(messages.Message):
+    """Ranking Form for outbound Ranking information"""
+    user_name = messages.StringField(1, required=True)
+    wins = messages.IntegerField(2)
+    percent_won = messages.FloatField(3)
+    avg_incorrect_guesses = messages.FloatField(4)
+    message = messages.StringField(5)
+
+ 
+class RankingForms(messages.Message):
+    """Return multiple Ranking forms"""
+    items = messages.MessageField(RankingForm, 1, repeated=True)
 
 
 class StringMessage(messages.Message):

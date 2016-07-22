@@ -11,9 +11,9 @@ from protorpc import remote, messages, message_types
 from google.appengine.api import memcache
 from google.appengine.api import taskqueue
 
-from models import User, Game, Score
+from models import User, Game, Score, Ranking
 from models import StringMessage, NewGameForm, GameForm, GameForms, MakeMoveForm,\
-	ScoreForms
+	ScoreForms, RankingForm, RankingForms
 from utils import get_by_urlsafe
 
 
@@ -93,15 +93,14 @@ class HangmanAPI(remote.Service):
 		if game.game_over:
 			return game.to_form('This game is already over!')
 		if not user:
-			raise endpoints.NotFoundException(
+			raise endpoints.NotFoundException( 
 					'A user with that name does not exist!')
 		if user.key != game.user:
 			raise endpoints.ForbiddenException(
 					'You cannot cancel a game that is not your own!')
 		else:
 			# Cancelled games can't be high on the 'leaderboard'.
-			game.attempts_remaining = -99
-			game.end_game()
+			game.end_game(False)
 			game.key.delete()
 		return game.to_form('This game has been canceled.')
 
@@ -198,39 +197,44 @@ class HangmanAPI(remote.Service):
 # # the 'performance' indicator (eg. win/loss ratio).
 
 
-# 	@endpoints.method(request_message=message_types.VoidMessage,
-# 					  response_message=ScoreForms,
-# 					  path='rankings/user/{user_name}',
-# 					  name='get_user_rankings',
-# 					  http_method='GET')
-# 	def get_user_rankings(self, request):
-# 		"""Returns the top scores in decending order."""
-# 		pass
+	@endpoints.method(request_message=USER_REQUEST,
+					  response_message=RankingForm,
+					  path='ranking/user/{user_name}',
+					  name='get_user_ranking',
+					  http_method='GET')
+	def get_user_ranking(self, request):
+		"""Returns the performance of the player as a Ranking."""
+		user = User.query(User.name == request.user_name).get()
+		if not user:
+			raise endpoints.NotFoundException(
+					'A User with that name does not exist!')
+		
+		scores = Score.query(Score.user == user.key).fetch()
+		if not scores:
+			raise endpoints.NotFoundException(
+					'No scores were found for that user!')
+		
+		wins = sum(s.won == True for s in scores)
+		percent_won = (float(wins)/len(scores)) * 100
+		number_of_guesses = sum(score.incorrect_guesses for score in scores)
+		avg_incorrect_guesses = float(number_of_guesses)/len(scores)
+
+		ranking = Ranking.query(Ranking.user == user.key).get()
+		if ranking:
+			ranking.wins = wins
+			ranking.percent_won = percent_won
+			ranking.avg_incorrect_guesses = avg_incorrect_guesses
+			ranking.put()
+			return ranking.to_form("Ranking has been updated for {}".format(user.name))
+		else:
+			ranking = Ranking.new_ranking(user=user.key,
+										  wins=wins,
+										  percent_won=percent_won,
+										  avg_incorrect_guesses=avg_incorrect_guesses)
+			return ranking.to_form("Ranking created for {}".format(user.name))
+
 
  
-# #  - **get_game_history**     - Your API Users may want to be able to see a
-# # 'history' of moves for each game.     - For example, Chess uses a format called
-# # <a href="https://en.wikipedia.org/wiki/Portable_Game_Notation"
-# # target="_blank">PGN</a>) which allows any game to be replayed and watched move
-# # by move.     - Add the capability for a Game's history to be presented in a
-# # similar way. For example: If a User made played 'Guess a Number' with the moves:
-# # (5, 8, 7), and received messages such as: ('Too low!', 'Too high!',     'You
-# # win!'), an endpoint exposing the game_history might produce something like:
-# # [('Guess': 5, result: 'Too low'), ('Guess': 8, result: 'Too high'),
-# # ('Guess': 7, result: 'Win. Game over')].     - Adding this functionality will
-# # require some additional properties in the 'Game' model along with a Form, and
-# # endpoint to present the data to the User.
-
-
-# 	@endpoints.method(request_message=message_types.VoidMessage,
-# 					  response_message=GameForms,
-# 					  path='game/history/user/{user_name}',
-# 					  name='get_game_history',
-# 					  http_method='GET')
-# 	def get_game_history(self, request):
-# 		"""Returns the top scores in decending order."""
-# 		pass
-
 
 # ----------------------------------------------------------------------------
 

@@ -246,7 +246,12 @@ class HangmanAPI(remote.Service):
 					  name='get_game_history'
 					  http_method=GET)
 	def get_game_history(self, request):
-		pass
+		"""Produces a history of the guesses of a game."""
+        # Maybe like this? [('Guess': 'i, 'board': '****i**', 'incorrect': ['a', 'p', 'k']),
+        				#   ('Guess': 'e', 'board': '*e**ie*', 'incorrect': ['a', 'p', 'k'])]
+        				#   ('Guess': 't', 'board': '*e**ie*', 'incorrect': ['a', 'p', 'k', 't'])]
+
+
 
 # ----------------------------------------------------------------------------
 

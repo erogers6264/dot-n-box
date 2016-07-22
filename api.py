@@ -190,18 +190,12 @@ class HangmanAPI(remote.Service):
 		return ScoreForms(items=[highscore.to_form() for\
 								 highscore in highscores])
 
-# #  - **get_user_rankings**     - Come up with a method for ranking the performance
-# # of each player.       For "Guess a Number" this could be by winning percentage
-# # with ties broken by the average number of guesses.     - Create an endpoint that
-# # returns this player ranking. The results should include each Player's name and
-# # the 'performance' indicator (eg. win/loss ratio).
-
 
 	@endpoints.method(request_message=USER_REQUEST,
 					  response_message=RankingForm,
 					  path='ranking/user/{user_name}',
 					  name='get_user_ranking',
-					  http_method='GET')
+					  http_method='POST')
 	def get_user_ranking(self, request):
 		"""Returns the performance of the player as a Ranking."""
 		user = User.query(User.name == request.user_name).get()
@@ -233,8 +227,26 @@ class HangmanAPI(remote.Service):
 										  avg_incorrect_guesses=avg_incorrect_guesses)
 			return ranking.to_form("Ranking created for {}".format(user.name))
 
-
+#  - **get_game_history**     - Your API Users may want to be able to see a
+# 'history' of moves for each game.     - For example, Chess uses a format
+# called <a href="https://en.wikipedia.org/wiki/Portable_Game_Notation"
+# target="_blank">PGN</a>) which allows any game to be replayed and watched move
+# by move.     - Add the capability for a Game's history to be presented in a
+# similar way. For example: If a User made played 'Guess a Number' with the
+# moves:     (5, 8, 7), and received messages such as: ('Too low!', 'Too high!',
+# 'You win!'), an endpoint exposing the game_history might produce something
+# like:     [('Guess': 5, result: 'Too low'), ('Guess': 8, result: 'Too high'),
+# ('Guess': 7, result: 'Win. Game over')].     - Adding this functionality will
+# require some additional properties in the 'Game' model along with a Form, and
+# endpoint to present the data to the User.
  
+	@endpoints.method(request_message=USER_REQUEST,
+					  response_message=HistoryForm,
+					  path='history/game/{urlsafe_game_key}',
+					  name='get_game_history'
+					  http_method=GET)
+	def get_game_history(self, request):
+		pass
 
 # ----------------------------------------------------------------------------
 

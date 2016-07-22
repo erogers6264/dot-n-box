@@ -153,6 +153,15 @@ class RankingForms(messages.Message):
     items = messages.MessageField(RankingForm, 1, repeated=True)
 
 
+class HistoryForm(messages.Message):
+    """History form for outbound history information"""
+    guess_list = messages.messages.StringField(1)
+    board = messages.StringField(2)
+
+class HistoryForms(messages.Message):
+    """Return multiple history forms"""
+    items = messages.MessageField(HistoryForm, 1, repeated=True)
+
 class StringMessage(messages.Message):
     """StringMessage-- outbound (single) string message"""
     message = messages.StringField(1, required=True)

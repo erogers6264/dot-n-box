@@ -53,6 +53,9 @@ class Game(ndb.Model):
         form.message = message
         return form
 
+    def to_history_form(self):
+        return HistoryForm(history=str(self.history))
+
     def end_game(self, won=False):
         """Ends the game - if won is True, the player won. - if won is False,
         the player lost."""
@@ -135,7 +138,6 @@ class ScoreForm(messages.Message):
     won = messages.BooleanField(3, required=True)
     incorrect_guesses = messages.IntegerField(4, required=True)
 
-
 class ScoreForms(messages.Message):
     """Return multiple ScoreForms"""
     items = messages.MessageField(ScoreForm, 1, repeated=True)
@@ -157,13 +159,7 @@ class RankingForms(messages.Message):
 
 class HistoryForm(messages.Message):
     """History form for outbound history information"""
-    guess_list = messages.messages.StringField(1)
-    board = messages.StringField(2)
-
-
-class HistoryForms(messages.Message):
-    """Return multiple history forms"""
-    items = messages.MessageField(HistoryForm, 1, repeated=True)
+    history = messages.StringField(1)
 
 
 class StringMessage(messages.Message):

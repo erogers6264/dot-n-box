@@ -117,7 +117,7 @@ class HangmanAPI(remote.Service):
 					'A User with that name unfortunately does not exist!')
 		games = Game.query(Game.user == user.key)
 		return GameForms(items=[game.to_form(message="Here are the games.")\
-						 		for game in games])
+								for game in games])
 
 	@endpoints.method(request_message=MAKE_MOVE_REQUEST,
 					  response_message=GameForm,
@@ -130,17 +130,16 @@ class HangmanAPI(remote.Service):
 		if game.game_over:
 			return game.to_form('Game already over!')
 
-        if request.guess in game.already_guessed:
-            return game.to_form('You have already guessed these letters: {}'\
-                                .format(game.already_guessed))
-        game.already_guessed.append(request.guess)
+		if request.guess in game.already_guessed:
+			return game.to_form('You have already guessed these letters: {}'.format(game.already_guessed))
+		
+		game.already_guessed.append(request.guess)
 
-		indexes_of_correct = [i for i, g in enumerate(game.target)\
-							  if g == request.guess]
+		indexes_of_correct = [i for i, g in enumerate(game.target) if g == request.guess]
 
 		if not indexes_of_correct:
 			game.attempts_remaining -= 1
-            # Display the 'board' with the message
+			# Display the 'board' with the message
 			msg = string.join(game.board, '')
 			msg += ' Not in word. You have {} attempts remaining.'.format(\
 						game.attempts_remaining)
@@ -149,15 +148,15 @@ class HangmanAPI(remote.Service):
 				game.board[i] = request.guess
 			msg = string.join(game.board, '')
 			msg += ' You got one!'
-        
-        game.history.append({'guess': request.guess,
-                             'board': string.join(game.board, ''),
-                             'already_guessed': game.already_guessed})
-        
-        if string.join(game.board, '') == game.target:
-            game.end_game(True)
-            msg = string.join(game.board, '')
-            return game.to_form(msg + ' You win!')
+		
+		game.history.append({'guess': request.guess,
+							 'board': string.join(game.board, ''),
+							 'already_guessed': game.already_guessed})
+		
+		if string.join(game.board, '') == game.target:
+			game.end_game(True)
+			msg = string.join(game.board, '')
+			return game.to_form(msg + ' You win!')
 
 		if game.attempts_remaining < 1:
 			game.end_game(False)
@@ -231,7 +230,7 @@ class HangmanAPI(remote.Service):
 			ranking.avg_incorrect_guesses = avg_incorrect_guesses
 			ranking.put()
 			return ranking.to_form("Ranking has been updated for {}".format(\
-                                        user.name))
+										user.name))
 		else:
 			ranking = Ranking.new_ranking(user=user.key,
 										  wins=wins,
@@ -252,18 +251,18 @@ class HangmanAPI(remote.Service):
 # require some additional properties in the 'Game' model along with a Form, and
 # endpoint to present the data to the User.
  
-	@endpoints.method(request_message=USER_REQUEST,
+	@endpoints.method(request_message=GET_GAME_REQUEST,
 					  response_message=HistoryForm,
 					  path='history/game/{urlsafe_game_key}',
 					  name='get_game_history',
 					  http_method='GET')
 	def get_game_history(self, request):
 		"""Produces a history of the guesses of a game."""
-        # Maybe like this? [('Guess': 'i, 'board': '****i**', 'incorrect': ['a', 'p', 'k']),
-        				#   ('Guess': 'e', 'board': '*e**ie*', 'incorrect': ['a', 'p', 'k'])]
-        				#   ('Guess': 't', 'board': '*e**ie*', 'incorrect': ['a', 'p', 'k', 't'])]
+		# Maybe like this? [('Guess': 'i, 'board': '****i**', 'incorrect': ['a', 'p', 'k']),
+						#   ('Guess': 'e', 'board': '*e**ie*', 'incorrect': ['a', 'p', 'k'])]
+						#   ('Guess': 't', 'board': '*e**ie*', 'incorrect': ['a', 'p', 'k', 't'])]
 		game = get_by_urlsafe(request.urlsafe_game_key, Game)
-
+		return game.to_history_form()
 
 
 

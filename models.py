@@ -24,7 +24,7 @@ class Game(ndb.Model):
     game_over = ndb.BooleanProperty(required=True, default=False)
     user = ndb.KeyProperty(required=True, kind='User')
     blanks = ndb.JsonProperty(required=True)
-    already_guessed = ndb.JsonProperty(required=True)
+    history = ndb.JsonProperty(required=True)
 
     @classmethod
     def new_game(cls, user, attempts):
@@ -35,7 +35,7 @@ class Game(ndb.Model):
                     blanks=['*' for char in target],
                     attempts_allowed=attempts,
                     attempts_remaining=attempts,
-                    already_guessed=[],
+                    history=[],
                     game_over=False)
         game.put()
         return game
@@ -158,9 +158,11 @@ class HistoryForm(messages.Message):
     guess_list = messages.messages.StringField(1)
     board = messages.StringField(2)
 
+
 class HistoryForms(messages.Message):
     """Return multiple history forms"""
     items = messages.MessageField(HistoryForm, 1, repeated=True)
+
 
 class StringMessage(messages.Message):
     """StringMessage-- outbound (single) string message"""

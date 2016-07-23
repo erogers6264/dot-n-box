@@ -130,6 +130,11 @@ class HangmanAPI(remote.Service):
 		if game.game_over:
 			return game.to_form('Game already over!')
 
+        if request.guess in game.already_guessed:
+            return game.to_form('You have already guessed these letters: {}'\
+                                .format(game.already_guessed))
+        game.already_guessed.append(request.guess)
+
 		indexes_of_correct = [i for i, g in enumerate(game.target)\
 							  if g == request.guess]
 
@@ -144,11 +149,15 @@ class HangmanAPI(remote.Service):
 				game.board[i] = request.guess
 			msg = string.join(game.board, '')
 			msg += ' You got one!'
-		
-		if string.join(game.board, '') == game.target:
-			game.end_game(True)
+        
+        game.history.append({'guess': request.guess,
+                             'board': string.join(game.board, ''),
+                             'already_guessed': game.already_guessed})
+        
+        if string.join(game.board, '') == game.target:
+            game.end_game(True)
             msg = string.join(game.board, '')
-			return game.to_form(msg + ' You win!')
+            return game.to_form(msg + ' You win!')
 
 		if game.attempts_remaining < 1:
 			game.end_game(False)

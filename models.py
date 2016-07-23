@@ -24,6 +24,7 @@ class Game(ndb.Model):
     game_over = ndb.BooleanProperty(required=True, default=False)
     user = ndb.KeyProperty(required=True, kind='User')
     board = ndb.JsonProperty(required=True)
+    already_guessed = ndb.JsonProperty(required=True)
     history = ndb.JsonProperty(required=True)
 
     @classmethod
@@ -32,9 +33,10 @@ class Game(ndb.Model):
         target = randomWord()
         game = Game(user=user,
                     target=target,
-                    board=['*' for char in target],
                     attempts_allowed=attempts,
                     attempts_remaining=attempts,
+                    board=['*' for char in target],
+                    already_guessed=[],
                     history=[],
                     game_over=False)
         game.put()

@@ -136,18 +136,18 @@ class HangmanAPI(remote.Service):
 		if not indexes_of_correct:
 			game.attempts_remaining -= 1
             # Display the 'board' with the message
-			msg = string.join(game.blanks, '')
+			msg = string.join(game.board, '')
 			msg += ' Not in word. You have {} attempts remaining.'.format(\
 						game.attempts_remaining)
 		else:
 			for i in indexes_of_correct:
-				game.blanks[i] = request.guess
-			msg = string.join(game.blanks, '')
+				game.board[i] = request.guess
+			msg = string.join(game.board, '')
 			msg += ' You got one!'
 		
-		if string.join(game.blanks, '') == game.target:
+		if string.join(game.board, '') == game.target:
 			game.end_game(True)
-            msg = string.join(game.blanks, '')
+            msg = string.join(game.board, '')
 			return game.to_form(msg + ' You win!')
 
 		if game.attempts_remaining < 1:

@@ -23,7 +23,7 @@ class Game(ndb.Model):
     attempts_remaining = ndb.IntegerProperty(required=True, default=6)
     game_over = ndb.BooleanProperty(required=True, default=False)
     user = ndb.KeyProperty(required=True, kind='User')
-    blanks = ndb.JsonProperty(required=True)
+    board = ndb.JsonProperty(required=True)
     history = ndb.JsonProperty(required=True)
 
     @classmethod
@@ -32,7 +32,7 @@ class Game(ndb.Model):
         target = randomWord()
         game = Game(user=user,
                     target=target,
-                    blanks=['*' for char in target],
+                    board=['*' for char in target],
                     attempts_allowed=attempts,
                     attempts_remaining=attempts,
                     history=[],

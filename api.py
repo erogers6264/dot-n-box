@@ -135,8 +135,9 @@ class HangmanAPI(remote.Service):
 
 		if not indexes_of_correct:
 			game.attempts_remaining -= 1
+            # Display the 'board' with the message
 			msg = string.join(game.blanks, '')
-			msg += ' Not in word. You have {} attempts remaining.'.format(
+			msg += ' Not in word. You have {} attempts remaining.'.format(\
 						game.attempts_remaining)
 		else:
 			for i in indexes_of_correct:
@@ -146,7 +147,8 @@ class HangmanAPI(remote.Service):
 		
 		if string.join(game.blanks, '') == game.target:
 			game.end_game(True)
-			return game.to_form('You win!')
+            msg = string.join(game.blanks, '')
+			return game.to_form(msg + ' You win!')
 
 		if game.attempts_remaining < 1:
 			game.end_game(False)
@@ -219,7 +221,8 @@ class HangmanAPI(remote.Service):
 			ranking.percent_won = percent_won
 			ranking.avg_incorrect_guesses = avg_incorrect_guesses
 			ranking.put()
-			return ranking.to_form("Ranking has been updated for {}".format(user.name))
+			return ranking.to_form("Ranking has been updated for {}".format(\
+                                        user.name))
 		else:
 			ranking = Ranking.new_ranking(user=user.key,
 										  wins=wins,
@@ -251,6 +254,8 @@ class HangmanAPI(remote.Service):
         				#   ('Guess': 'e', 'board': '*e**ie*', 'incorrect': ['a', 'p', 'k'])]
         				#   ('Guess': 't', 'board': '*e**ie*', 'incorrect': ['a', 'p', 'k', 't'])]
 		game = get_by_urlsafe(request.urlsafe_game_key, Game)
+
+
 
 
 # ----------------------------------------------------------------------------

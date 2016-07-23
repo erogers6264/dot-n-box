@@ -23,8 +23,9 @@ class Game(ndb.Model):
     attempts_remaining = ndb.IntegerProperty(required=True, default=6)
     game_over = ndb.BooleanProperty(required=True, default=False)
     user = ndb.KeyProperty(required=True, kind='User')
-    blanks = ndb.JsonProperty(required=True)
+    board = ndb.JsonProperty(required=True)
     already_guessed = ndb.JsonProperty(required=True)
+    history = ndb.JsonProperty(required=True)
 
     @classmethod
     def new_game(cls, user, attempts):
@@ -32,10 +33,11 @@ class Game(ndb.Model):
         target = randomWord()
         game = Game(user=user,
                     target=target,
-                    blanks=['*' for char in target],
                     attempts_allowed=attempts,
                     attempts_remaining=attempts,
+                    board=['*' for char in target],
                     already_guessed=[],
+                    history=[],
                     game_over=False)
         game.put()
         return game
@@ -50,6 +52,9 @@ class Game(ndb.Model):
         form.game_over = self.game_over
         form.message = message
         return form
+
+    def to_history_form(self):
+        return HistoryForm(history=str(self.history))
 
     def end_game(self, won=False):
         """Ends the game - if won is True, the player won. - if won is False,
@@ -133,7 +138,6 @@ class ScoreForm(messages.Message):
     won = messages.BooleanField(3, required=True)
     incorrect_guesses = messages.IntegerField(4, required=True)
 
-
 class ScoreForms(messages.Message):
     """Return multiple ScoreForms"""
     items = messages.MessageField(ScoreForm, 1, repeated=True)
@@ -151,6 +155,11 @@ class RankingForm(messages.Message):
 class RankingForms(messages.Message):
     """Return multiple Ranking forms"""
     items = messages.MessageField(RankingForm, 1, repeated=True)
+
+
+class HistoryForm(messages.Message):
+    """History form for outbound history information"""
+    history = messages.StringField(1)
 
 
 class StringMessage(messages.Message):

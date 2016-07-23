@@ -13,7 +13,7 @@ from google.appengine.api import taskqueue
 
 from models import User, Game, Score, Ranking
 from models import StringMessage, NewGameForm, GameForm, GameForms, MakeMoveForm,\
-	ScoreForms, RankingForm, RankingForms
+	ScoreForms, RankingForm, RankingForms, HistoryForm
 from utils import get_by_urlsafe
 
 
@@ -117,7 +117,7 @@ class HangmanAPI(remote.Service):
 					'A User with that name unfortunately does not exist!')
 		games = Game.query(Game.user == user.key)
 		return GameForms(items=[game.to_form(message="Here are the games.")\
-						 		for game in games])
+								for game in games])
 
 	@endpoints.method(request_message=MAKE_MOVE_REQUEST,
 					  response_message=GameForm,
@@ -130,23 +130,33 @@ class HangmanAPI(remote.Service):
 		if game.game_over:
 			return game.to_form('Game already over!')
 
-		indexes_of_correct = [i for i, g in enumerate(game.target)\
-							  if g == request.guess]
+		if request.guess in game.already_guessed:
+			return game.to_form('You have already guessed these letters: {}'.format(game.already_guessed))
+		
+		game.already_guessed.append(request.guess)
+
+		indexes_of_correct = [i for i, g in enumerate(game.target) if g == request.guess]
 
 		if not indexes_of_correct:
 			game.attempts_remaining -= 1
-			msg = string.join(game.blanks, '')
-			msg += ' Not in word. You have {} attempts remaining.'.format(
+			# Display the 'board' with the message
+			msg = string.join(game.board, '')
+			msg += ' Not in word. You have {} attempts remaining.'.format(\
 						game.attempts_remaining)
 		else:
 			for i in indexes_of_correct:
-				game.blanks[i] = request.guess
-			msg = string.join(game.blanks, '')
+				game.board[i] = request.guess
+			msg = string.join(game.board, '')
 			msg += ' You got one!'
 		
-		if string.join(game.blanks, '') == game.target:
+		game.history.append({'guess': request.guess,
+							 'board': string.join(game.board, ''),
+							 'already_guessed': game.already_guessed})
+		
+		if string.join(game.board, '') == game.target:
 			game.end_game(True)
-			return game.to_form('You win!')
+			msg = string.join(game.board, '')
+			return game.to_form(msg + ' You win!')
 
 		if game.attempts_remaining < 1:
 			game.end_game(False)
@@ -190,18 +200,12 @@ class HangmanAPI(remote.Service):
 		return ScoreForms(items=[highscore.to_form() for\
 								 highscore in highscores])
 
-# #  - **get_user_rankings**     - Come up with a method for ranking the performance
-# # of each player.       For "Guess a Number" this could be by winning percentage
-# # with ties broken by the average number of guesses.     - Create an endpoint that
-# # returns this player ranking. The results should include each Player's name and
-# # the 'performance' indicator (eg. win/loss ratio).
-
 
 	@endpoints.method(request_message=USER_REQUEST,
 					  response_message=RankingForm,
 					  path='ranking/user/{user_name}',
 					  name='get_user_ranking',
-					  http_method='GET')
+					  http_method='POST')
 	def get_user_ranking(self, request):
 		"""Returns the performance of the player as a Ranking."""
 		user = User.query(User.name == request.user_name).get()
@@ -225,7 +229,8 @@ class HangmanAPI(remote.Service):
 			ranking.percent_won = percent_won
 			ranking.avg_incorrect_guesses = avg_incorrect_guesses
 			ranking.put()
-			return ranking.to_form("Ranking has been updated for {}".format(user.name))
+			return ranking.to_form("Ranking has been updated for {}".format(\
+										user.name))
 		else:
 			ranking = Ranking.new_ranking(user=user.key,
 										  wins=wins,
@@ -233,8 +238,33 @@ class HangmanAPI(remote.Service):
 										  avg_incorrect_guesses=avg_incorrect_guesses)
 			return ranking.to_form("Ranking created for {}".format(user.name))
 
-
+#  - **get_game_history**     - Your API Users may want to be able to see a
+# 'history' of moves for each game.     - For example, Chess uses a format
+# called <a href="https://en.wikipedia.org/wiki/Portable_Game_Notation"
+# target="_blank">PGN</a>) which allows any game to be replayed and watched move
+# by move.     - Add the capability for a Game's history to be presented in a
+# similar way. For example: If a User made played 'Guess a Number' with the
+# moves:     (5, 8, 7), and received messages such as: ('Too low!', 'Too high!',
+# 'You win!'), an endpoint exposing the game_history might produce something
+# like:     [('Guess': 5, result: 'Too low'), ('Guess': 8, result: 'Too high'),
+# ('Guess': 7, result: 'Win. Game over')].     - Adding this functionality will
+# require some additional properties in the 'Game' model along with a Form, and
+# endpoint to present the data to the User.
  
+	@endpoints.method(request_message=GET_GAME_REQUEST,
+					  response_message=HistoryForm,
+					  path='history/game/{urlsafe_game_key}',
+					  name='get_game_history',
+					  http_method='GET')
+	def get_game_history(self, request):
+		"""Produces a history of the guesses of a game."""
+		# Maybe like this? [('Guess': 'i, 'board': '****i**', 'incorrect': ['a', 'p', 'k']),
+						#   ('Guess': 'e', 'board': '*e**ie*', 'incorrect': ['a', 'p', 'k'])]
+						#   ('Guess': 't', 'board': '*e**ie*', 'incorrect': ['a', 'p', 'k', 't'])]
+		game = get_by_urlsafe(request.urlsafe_game_key, Game)
+		return game.to_history_form()
+
+
 
 # ----------------------------------------------------------------------------
 
@@ -254,7 +284,7 @@ class HangmanAPI(remote.Service):
 		if games:
 			count = len(games)
 			total_attempts_remaining = sum([game.attempts_remaining
-										for game in games])
+											for game in games])
 			average = float(total_attempts_remaining)/count
 			memcache.set(MEMCACHE_MOVES_REMAINING,
 						 'The average moves remaining is {:.2f}'.format(average))

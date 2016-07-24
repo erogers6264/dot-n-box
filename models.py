@@ -72,15 +72,15 @@ class Ranking(ndb.Model):
     user = ndb.KeyProperty(required=True, kind='User')
     wins = ndb.IntegerProperty(required=True)    
     percent_won = ndb.FloatProperty(required=True) 
-    avg_incorrect_guesses = ndb.FloatProperty(required=True)   
+    avg_wrong = ndb.FloatProperty(required=True)   
 
     @classmethod
-    def new_ranking(cls, user, wins, percent_won, avg_incorrect_guesses):
+    def new_ranking(cls, user, wins, percent_won, avg_wrong):
         """Creates and returns a new ranking"""
         ranking = Ranking(user=user,
                           wins=wins,
                           percent_won=percent_won,
-                          avg_incorrect_guesses=avg_incorrect_guesses)
+                          avg_wrong=avg_wrong)
         ranking.put()
         return ranking
 
@@ -89,7 +89,7 @@ class Ranking(ndb.Model):
          form.user_name = self.user.get().name
          form.wins = self.wins
          form.percent_won = self.percent_won
-         form.avg_incorrect_guesses = self.avg_incorrect_guesses
+         form.avg_wrong = self.avg_wrong
          form.message = message
          return form
 

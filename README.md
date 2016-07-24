@@ -1,11 +1,33 @@
-#Full Stack Nanodegree Project 4 Refresh
+#### Task 5: README and API Documentation
+Be sure to document your game. Your README file should include:
+
+1. Instructions for playing the game
+2. Detailed descriptions of each endpoint
+
+Remember, you are documenting an API that another programmer may want to use as the basis for a web or mobile app.
+An api user should *not* need to read the source code to understand how to use it.
+You may follow the format of 'Guess a Number' for your README.
+
+### Reflect on Your Design
+Document your design decisions by answering the following questions:
+   
+- What additional properties did you add to your models and why?
+- What were some of the trade-offs or struggles you faced when implementing the new game logic?
+
+These answers should be in a file Design.txt.
+Your responses can be in paragraph form or bulleted lists.
+This document should be around 500 words long.
+
+
+
+#Hangman Game API
 
 ## Set-Up Instructions:
 1.  Update the value of application in app.yaml to the app ID you have registered
- in the App Engine admin console and would like to use to host your instance of this sample.
-1.  Run the app with the devserver using dev_appserver.py DIR, and ensure it's
+ in the App Engine admin console and would like to use to host your instance of hangman.
+2.  Run the app with the devserver using dev_appserver.py DIR, and ensure it's
  running by visiting the API Explorer - by default localhost:8080/_ah/api/explorer.
-1.  (Optional) Generate your client library(ies) with the endpoints tool.
+3.  (Optional) Generate your client library(ies) with the endpoints tool.
  Deploy your application.
  
  

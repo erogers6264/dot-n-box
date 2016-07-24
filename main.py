@@ -8,7 +8,7 @@ import webapp2
 from google.appengine.api import mail, app_identity
 from api import HangmanAPI
 
-from models import User
+from models import User, Game
 
 
 # In the skeleton Guess a Number project, a cron job and associated handler have been created (see cron.yaml and main.py).
@@ -24,14 +24,17 @@ class SendReminderEmail(webapp2.RequestHandler):
         app_id = app_identity.get_application_id()
         users = User.query(User.email != None)
         for user in users:
-            subject = 'This is a reminder!'
-            body = 'Hello {}, try out Hangman!'.format(user.name)
-            # This will send test emails, the arguments to send_mail are:
-            # from, to, subject, body
-            mail.send_mail('noreply@{}.appspotmail.com'.format(app_id),
-                           user.email,
-                           subject,
-                           body)
+            games = Game.query(Game.user == user.key and Game.game_over == False)
+            if games:
+                subject = 'This is a reminder!'
+                body = 'Hello {}, you have a session of hangman to finish.'/
+                       'Come back!'.format(user.name)
+                # This will send test emails, the arguments to send_mail are:
+                # from, to, subject, body
+                mail.send_mail('noreply@{}.appspotmail.com'.format(app_id),
+                               user.email,
+                               subject,
+                               body)
 
 
 class UpdateAverageMovesRemaining(webapp2.RequestHandler):

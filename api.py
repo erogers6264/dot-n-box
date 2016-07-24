@@ -131,11 +131,13 @@ class HangmanAPI(remote.Service):
 			return game.to_form('Game already over!')
 
 		if request.guess in game.already_guessed:
-			return game.to_form('You have already guessed these letters: {}'.format(game.already_guessed))
+			return game.to_form('You have already guessed these letters: {}'\
+								.format(game.already_guessed))
 		
 		game.already_guessed.append(request.guess)
 
-		indexes_of_correct = [i for i, g in enumerate(game.target) if g == request.guess]
+		indexes_of_correct = [i for i, g in enumerate(game.target)\
+							  if g == request.guess]
 
 		if not indexes_of_correct:
 			game.attempts_remaining -= 1
@@ -221,13 +223,13 @@ class HangmanAPI(remote.Service):
 		wins = sum(s.won == True for s in scores)
 		percent_won = (float(wins)/len(scores)) * 100
 		number_of_guesses = sum(score.incorrect_guesses for score in scores)
-		avg_incorrect_guesses = float(number_of_guesses)/len(scores)
+		avg_wrong = float(number_of_guesses)/len(scores)
 
 		ranking = Ranking.query(Ranking.user == user.key).get()
 		if ranking:
 			ranking.wins = wins
 			ranking.percent_won = percent_won
-			ranking.avg_incorrect_guesses = avg_incorrect_guesses
+			ranking.avg_wrong = avg_wrong
 			ranking.put()
 			return ranking.to_form("Ranking has been updated for {}".format(\
 										user.name))
@@ -235,21 +237,8 @@ class HangmanAPI(remote.Service):
 			ranking = Ranking.new_ranking(user=user.key,
 										  wins=wins,
 										  percent_won=percent_won,
-										  avg_incorrect_guesses=avg_incorrect_guesses)
+										  avg_wrong=avg_wrong)
 			return ranking.to_form("Ranking created for {}".format(user.name))
-
-#  - **get_game_history**     - Your API Users may want to be able to see a
-# 'history' of moves for each game.     - For example, Chess uses a format
-# called <a href="https://en.wikipedia.org/wiki/Portable_Game_Notation"
-# target="_blank">PGN</a>) which allows any game to be replayed and watched move
-# by move.     - Add the capability for a Game's history to be presented in a
-# similar way. For example: If a User made played 'Guess a Number' with the
-# moves:     (5, 8, 7), and received messages such as: ('Too low!', 'Too high!',
-# 'You win!'), an endpoint exposing the game_history might produce something
-# like:     [('Guess': 5, result: 'Too low'), ('Guess': 8, result: 'Too high'),
-# ('Guess': 7, result: 'Win. Game over')].     - Adding this functionality will
-# require some additional properties in the 'Game' model along with a Form, and
-# endpoint to present the data to the User.
  
 	@endpoints.method(request_message=GET_GAME_REQUEST,
 					  response_message=HistoryForm,
@@ -258,16 +247,8 @@ class HangmanAPI(remote.Service):
 					  http_method='GET')
 	def get_game_history(self, request):
 		"""Produces a history of the guesses of a game."""
-		# Maybe like this? [('Guess': 'i, 'board': '****i**', 'incorrect': ['a', 'p', 'k']),
-						#   ('Guess': 'e', 'board': '*e**ie*', 'incorrect': ['a', 'p', 'k'])]
-						#   ('Guess': 't', 'board': '*e**ie*', 'incorrect': ['a', 'p', 'k', 't'])]
 		game = get_by_urlsafe(request.urlsafe_game_key, Game)
 		return game.to_history_form()
-
-
-
-# ----------------------------------------------------------------------------
-
 
 	@endpoints.method(response_message=StringMessage,
 					  path='games/average_attempts',

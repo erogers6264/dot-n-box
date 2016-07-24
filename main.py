@@ -11,10 +11,16 @@ from api import HangmanAPI
 from models import User
 
 
+# In the skeleton Guess a Number project, a cron job and associated handler have been created (see cron.yaml and main.py).
+# This sends an hourly reminder email to every User with an email address to try out 'Guess a Number'.
+# This is probably annoying the users.
+
+# Modify the SendReminderEmail handler so that this reminder email is only sent to users that have incomplete games (or some other logic that makes sense to you).
+# Make sure to update the message to reflect this.
 class SendReminderEmail(webapp2.RequestHandler):
     def get(self):
         """Send a reminder email to each User with an email about games.
-        Called every hour using a cron job"""
+        Called every 24 hours using a cron job"""
         app_id = app_identity.get_application_id()
         users = User.query(User.email != None)
         for user in users:

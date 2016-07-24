@@ -27,8 +27,8 @@ class SendReminderEmail(webapp2.RequestHandler):
             games = Game.query(Game.user == user.key and Game.game_over == False)
             if games:
                 subject = 'This is a reminder!'
-                body = 'Hello {}, you have a session of hangman to finish.'/
-                       'Come back!'.format(user.name)
+                body = 'Hello {}, you have a session of hangman to finish.'\
+                        .format(user.name)
                 # This will send test emails, the arguments to send_mail are:
                 # from, to, subject, body
                 mail.send_mail('noreply@{}.appspotmail.com'.format(app_id),

@@ -199,7 +199,7 @@ class HangmanAPI(remote.Service):
         TODO: Add a param number_of_results to limit
         returned results."""
         highscores = Score.query(Score.won == True).order(
-                        Score.incorrect_guesses).fetch()
+                        Score.total_incorrect).fetch()
         return ScoreForms(items=[highscore.to_form() for highscore
                                  in highscores])
 

@@ -63,7 +63,7 @@ class Game(ndb.Model):
         # Add the game to the score 'board'
         incorrect = self.attempts_allowed - self.attempts_remaining
         score = Score(user=self.user, date=date.today(), won=won,
-                      incorrect_guesses=incorrect)
+                      total_incorrect=incorrect)
         score.put()
 
 
@@ -99,13 +99,13 @@ class Score(ndb.Model):
     user = ndb.KeyProperty(required=True, kind='User')
     date = ndb.DateProperty(required=True)
     won = ndb.BooleanProperty(required=True)
-    incorrect_guesses = ndb.IntegerProperty(required=True)
+    total_incorrect = ndb.IntegerProperty(required=True)
 
     def to_form(self):
         return ScoreForm(user_name=self.user.get().name,
                          won=self.won,
                          date=str(self.date),
-                         incorrect_guesses=self.incorrect_guesses)
+                         total_incorrect=self.total_incorrect)
 
 
 class GameForm(messages.Message):
@@ -138,7 +138,7 @@ class ScoreForm(messages.Message):
     user_name = messages.StringField(1, required=True)
     date = messages.StringField(2, required=True)
     won = messages.BooleanField(3, required=True)
-    incorrect_guesses = messages.IntegerField(4, required=True)
+    total_incorrect = messages.IntegerField(4, required=True)
 
 
 class ScoreForms(messages.Message):

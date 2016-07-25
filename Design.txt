@@ -2,8 +2,53 @@
 Document your design decisions by answering the following questions:
    
 - What additional properties did you add to your models and why?
+Game:
+ - board
+   - In Guess a Number, the target was just an integer, whereas for Hangman I
+   needed a way to represent the more complex guessing of the letters of a word. 
+   Using a python list represented in the datastore as a JsonProperty, I was 
+   able to generate single character strings with asterisks (*) representing 
+   blanks. These stars are replaced by the the API with the correct string 
+   character as the user guesses the correct letters.
+
+ - already_guessed
+   - I needed a way to keep track of what letters were guessed for each game,
+   to make sure a user could not guess the same letter twice as well as to
+   easily generate the guesses of each 'move' as part of a game's history.
+ - history
+   - To be able to generate a history of moves for each game, this JsonProperty
+   stores a list of dictionaries, with each dictionary containing the board,
+   the guess, and the letters already guessed for each game.
+ - to_history_form(self)
+   - This instance method copies the required information from the Game instance
+   history attribute to a history form for transmission over the network.
+
+Ranking: The ranking is a subclass of ndb.Model so it can be easily stored,
+modified and retrieved from Google Datastore. I decided to add this class
+as an ancestor of a User key, so each User could create or update a Ranking.
+ - user
+   - KeyProperty which defines the ancestor relationship to the User kind
+ - wins
+   - 
+ - percent_won
+ - avg_wrong
+ - new_ranking(cls, user, wins, percent_won, avg_wrong)
+ - to_form(self, message)
+
+Score:
+ - total_incorrect
+
+GameForms()
+RankingForm()
+RankingForms()
+HistoryForm()
+
 - What were some of the trade-offs or struggles you faced when implementing the new game logic?
+
 
 These answers should be in a file Design.txt.
 Your responses can be in paragraph form or bulleted lists.
 This document should be around 500 words long.
+
+In order to implement this hangman game API, 
+

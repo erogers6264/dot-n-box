@@ -42,7 +42,6 @@ class Game(ndb.Model):
         game.put()
         return game
 
-
     def to_form(self, message):
         """Returns a GameForm representation of the Game"""
         form = GameForm()
@@ -62,17 +61,18 @@ class Game(ndb.Model):
         self.game_over = True
         self.put()
         # Add the game to the score 'board'
+        incorrect = self.attempts_allowed - self.attempts_remaining
         score = Score(user=self.user, date=date.today(), won=won,
-                      incorrect_guesses=self.attempts_allowed - self.attempts_remaining)
+                      incorrect_guesses=incorrect)
         score.put()
 
 
 class Ranking(ndb.Model):
     """Ranking object"""
     user = ndb.KeyProperty(required=True, kind='User')
-    wins = ndb.IntegerProperty(required=True)    
-    percent_won = ndb.FloatProperty(required=True) 
-    avg_wrong = ndb.FloatProperty(required=True)   
+    wins = ndb.IntegerProperty(required=True)
+    percent_won = ndb.FloatProperty(required=True)
+    avg_wrong = ndb.FloatProperty(required=True)
 
     @classmethod
     def new_ranking(cls, user, wins, percent_won, avg_wrong):
@@ -85,13 +85,13 @@ class Ranking(ndb.Model):
         return ranking
 
     def to_form(self, message):
-         form = RankingForm()
-         form.user_name = self.user.get().name
-         form.wins = self.wins
-         form.percent_won = self.percent_won
-         form.avg_wrong = self.avg_wrong
-         form.message = message
-         return form
+        form = RankingForm()
+        form.user_name = self.user.get().name
+        form.wins = self.wins
+        form.percent_won = self.percent_won
+        form.avg_wrong = self.avg_wrong
+        form.message = message
+        return form
 
 
 class Score(ndb.Model):
@@ -102,8 +102,10 @@ class Score(ndb.Model):
     incorrect_guesses = ndb.IntegerProperty(required=True)
 
     def to_form(self):
-        return ScoreForm(user_name=self.user.get().name, won=self.won,
-                         date=str(self.date), incorrect_guesses=self.incorrect_guesses)
+        return ScoreForm(user_name=self.user.get().name,
+                         won=self.won,
+                         date=str(self.date),
+                         incorrect_guesses=self.incorrect_guesses)
 
 
 class GameForm(messages.Message):
@@ -118,7 +120,7 @@ class GameForm(messages.Message):
 class GameForms(messages.Message):
     """Return multiple GameForms"""
     items = messages.MessageField(GameForm, 1, repeated=True)
-    
+
 
 class NewGameForm(messages.Message):
     """Used to create a new game"""
@@ -138,6 +140,7 @@ class ScoreForm(messages.Message):
     won = messages.BooleanField(3, required=True)
     incorrect_guesses = messages.IntegerField(4, required=True)
 
+
 class ScoreForms(messages.Message):
     """Return multiple ScoreForms"""
     items = messages.MessageField(ScoreForm, 1, repeated=True)
@@ -151,7 +154,7 @@ class RankingForm(messages.Message):
     avg_wrong = messages.FloatField(4)
     message = messages.StringField(5)
 
- 
+
 class RankingForms(messages.Message):
     """Return multiple Ranking forms"""
     items = messages.MessageField(RankingForm, 1, repeated=True)

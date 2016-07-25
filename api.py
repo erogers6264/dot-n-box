@@ -83,7 +83,7 @@ class HangmanAPI(remote.Service):
 
 	@endpoints.method(request_message=CANCEL_GAME_REQUEST,
 					  response_message=GameForm,
-					  path='game/{urlsafe_game_key}',
+					  path='game/{urlsafe_game_key}/cancel',
 					  name='cancel_game',
 					  http_method='POST')
 	def cancel_game(self, request):
@@ -198,7 +198,7 @@ class HangmanAPI(remote.Service):
 		"""Returns the top scores in decending order.
 		TODO: Add a param number_of_results to limit
 		returned results."""
-		highscores = Score.query().order(Score.incorrect_guesses).fetch()
+		highscores = Score.query(Score.won == True).order(Score.incorrect_guesses).fetch()
 		return ScoreForms(items=[highscore.to_form() for\
 								 highscore in highscores])
 

@@ -148,7 +148,7 @@ class RankingForm(messages.Message):
     user_name = messages.StringField(1, required=True)
     wins = messages.IntegerField(2)
     percent_won = messages.FloatField(3)
-    avg_incorrect_guesses = messages.FloatField(4)
+    avg_wrong = messages.FloatField(4)
     message = messages.StringField(5)
 
  

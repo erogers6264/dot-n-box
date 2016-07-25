@@ -268,8 +268,9 @@ class HangmanAPI(remote.Service):
             total_attempts_remaining = sum([game.attempts_remaining
                                             for game in games])
             average = float(total_attempts_remaining)/count
-            memcache.set(MEMCACHE_MOVES_REMAINING,
-                         'The average moves remaining is {:.2f}'.format(average))
+            memcache.set(
+                MEMCACHE_MOVES_REMAINING,
+                'The average moves remaining is {:.2f}'.format(average))
 
 
 api = endpoints.api_server([HangmanAPI])

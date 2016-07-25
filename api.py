@@ -12,8 +12,8 @@ from google.appengine.api import memcache
 from google.appengine.api import taskqueue
 
 from models import User, Game, Score, Ranking
-from models import StringMessage, NewGameForm, GameForm, GameForms, MakeMoveForm,\
-    ScoreForms, RankingForm, RankingForms, HistoryForm
+from models import StringMessage, NewGameForm, GameForm, GameForms,\
+    MakeMoveForm, ScoreForms, RankingForm, RankingForms, HistoryForm
 from utils import get_by_urlsafe
 
 
@@ -93,7 +93,7 @@ class HangmanAPI(remote.Service):
         if game.game_over:
             return game.to_form('This game is already over!')
         if not user:
-            raise endpoints.NotFoundException( 
+            raise endpoints.NotFoundException(
                     'A user with that name does not exist!')
         if user.key != game.user:
             raise endpoints.ForbiddenException(
@@ -116,7 +116,7 @@ class HangmanAPI(remote.Service):
             raise endpoints.NotFoundException(
                     'A User with that name unfortunately does not exist!')
         games = Game.query(Game.user == user.key)
-        return GameForms(items=[game.to_form(message="Here are the games.")\
+        return GameForms(items=[game.to_form(message="Here are the games.")
                                 for game in games])
 
     @endpoints.method(request_message=MAKE_MOVE_REQUEST,
@@ -131,30 +131,30 @@ class HangmanAPI(remote.Service):
             return game.to_form('Game already over!')
 
         if request.guess in game.already_guessed:
-            return game.to_form('You have already guessed these letters: {}'\
+            return game.to_form('You have already guessed these letters: {}'
                                 .format(game.already_guessed))
-        
+
         game.already_guessed.append(request.guess)
 
-        indexes_of_correct = [i for i, g in enumerate(game.target)\
+        indexes_of_correct = [i for i, g in enumerate(game.target)
                               if g == request.guess]
 
         if not indexes_of_correct:
             game.attempts_remaining -= 1
             # Display the 'board' with the message
             msg = string.join(game.board, '')
-            msg += ' Not in word. You have {} attempts remaining.'.format(\
+            msg += ' Not in word. You have {} attempts remaining.'.format(
                         game.attempts_remaining)
         else:
             for i in indexes_of_correct:
                 game.board[i] = request.guess
             msg = string.join(game.board, '')
             msg += ' You got one!'
-        
+
         game.history.append({'guess': request.guess,
                              'board': string.join(game.board, ''),
                              'already_guessed': game.already_guessed})
-        
+
         if string.join(game.board, '') == game.target:
             game.end_game(True)
             msg = string.join(game.board, '')
@@ -198,10 +198,10 @@ class HangmanAPI(remote.Service):
         """Returns the top scores in decending order.
         TODO: Add a param number_of_results to limit
         returned results."""
-        highscores = Score.query(Score.won == True).order(Score.incorrect_guesses).fetch()
-        return ScoreForms(items=[highscore.to_form() for\
-                                 highscore in highscores])
-
+        highscores = Score.query(Score.won == True).order(
+                        Score.incorrect_guesses).fetch()
+        return ScoreForms(items=[highscore.to_form() for highscore
+                                 in highscores])
 
     @endpoints.method(request_message=USER_REQUEST,
                       response_message=RankingForm,
@@ -214,12 +214,12 @@ class HangmanAPI(remote.Service):
         if not user:
             raise endpoints.NotFoundException(
                     'A User with that name does not exist!')
-        
+
         scores = Score.query(Score.user == user.key).fetch()
         if not scores:
             raise endpoints.NotFoundException(
                     'No scores were found for that user!')
-        
+
         wins = sum(s.won == True for s in scores)
         percent_won = (float(wins)/len(scores)) * 100
         number_of_guesses = sum(score.incorrect_guesses for score in scores)
@@ -231,7 +231,7 @@ class HangmanAPI(remote.Service):
             ranking.percent_won = percent_won
             ranking.avg_wrong = avg_wrong
             ranking.put()
-            return ranking.to_form("Ranking has been updated for {}".format(\
+            return ranking.to_form("Ranking has been updated for {}".format(
                                         user.name))
         else:
             ranking = Ranking.new_ranking(user=user.key,
@@ -239,7 +239,7 @@ class HangmanAPI(remote.Service):
                                           percent_won=percent_won,
                                           avg_wrong=avg_wrong)
             return ranking.to_form("Ranking created for {}".format(user.name))
- 
+
     @endpoints.method(request_message=GET_GAME_REQUEST,
                       response_message=HistoryForm,
                       path='history/game/{urlsafe_game_key}',
@@ -256,7 +256,8 @@ class HangmanAPI(remote.Service):
                       http_method='GET')
     def get_average_attempts(self, request):
         """Get the cached average moves remaining"""
-        return StringMessage(message=memcache.get(MEMCACHE_MOVES_REMAINING) or '')
+        return StringMessage(message=memcache.get(
+                    MEMCACHE_MOVES_REMAINING) or '')
 
     @staticmethod
     def _cache_average_attempts():

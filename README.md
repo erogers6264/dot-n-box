@@ -148,6 +148,6 @@ can be retrieved or played using the path parameter `urlsafe_game_key`.
  - **RankingForm**
     - Representation of a player's ranking (user_name, wins, percent_won, avg_wrong).
  - **RankingForms**
-    -Multiple RankingForm container.
+    - Multiple RankingForm container.
  - **StringMessage**
     - General purpose String container.

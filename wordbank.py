@@ -1,10 +1,7 @@
 # 
-# Module should return a random selection, chosen for
-# use in a game of hangman. Will possibly expand to retrieve a list of words of a
-# user chosen category. Or something dynamic of that nature.
+# This module returns a random selection chosen for
+# use in a game of hangman.
 #
-
-
 import random
 
 

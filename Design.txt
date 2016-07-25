@@ -1,0 +1,9 @@
+### Reflect on Your Design
+Document your design decisions by answering the following questions:
+   
+- What additional properties did you add to your models and why?
+- What were some of the trade-offs or struggles you faced when implementing the new game logic?
+
+These answers should be in a file Design.txt.
+Your responses can be in paragraph form or bulleted lists.
+This document should be around 500 words long.

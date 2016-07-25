@@ -124,7 +124,7 @@ can be retrieved or played using the path parameter `urlsafe_game_key`.
     - Stores unique game states. Associated with User model via KeyProperty.
 
  - **Ranking**
-    - Stores a users ranking. Associated with User model via
+    - Stores a user's ranking. Associated with User model via
     KeyProperty.
     
  - **Score**

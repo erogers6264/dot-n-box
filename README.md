@@ -57,7 +57,7 @@ can be retrieved or played using the path parameter `urlsafe_game_key`.
 
  - **cancel_game**
     - Path: 'game/{urlsafe_game_key}/cancel'
-    - Method: POST
+    - Method: DELETE
     - Parameters: urlsafe_game_key
     - Returns: GameForm with game state and a message confirming cancellation.
     - Description: Cancels a currently active game.
@@ -103,7 +103,7 @@ can be retrieved or played using the path parameter `urlsafe_game_key`.
 
  - **get_user_ranking** 
     - Path: 'ranking/user/{username}'
-    - Method: POST
+    - Method: GET
     - Parameters: user_name
     - Returns: RankingForm.
     - Description: Returns a ranking for a player based on the performance of

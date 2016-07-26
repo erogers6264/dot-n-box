@@ -1,31 +1,30 @@
-Here are a few thoughts on the design decisions I made while developing this
-Hangman API on top of the more basic Guess A Number API. In order to support a
+Here are a few thoughts on the design of thisHangman API built on top of the more basic Guess A Number API. In order to support a
 more complex game flow, where the letters you've already guessed have an
 impact on the current move, it was necessary to modify some of the models.
 Following is a description of some of the major modifications:
 
 Game:
 - board
-  - In Guess a Number, the target was just an integer, whereas
+- In Guess a Number, the target was just an integer, whereas
 for Hangman I needed a way to represent the more complex guessing of the
 letters of a word. Using a python list represented in the Datastore as a
 JsonProperty, I was able to generate single character strings with asterisks
 (*) representing blanks. These stars are replaced by the the API with the
 correct string character as the user guesses the correct letters.
 
- - already_guessed
-   - I needed a way to keep track of what letters were
+- already_guessed
+- I needed a way to keep track of what letters were
 guessed for each game, to make sure a user could not guess the same letter
 twice as well as to easily generate the guesses of each 'move' as part of a
 game's history.
 
- - history
-   - To be able to generate a history of moves for each game, this
+- history
+- To be able to generate a history of moves for each game, this
 JsonProperty stores a list of dictionaries, with each dictionary containing
 the board, the guess, and the letters already guessed for each game.
 
- - to_history_form(self)
-   - This instance method copies the required
+- to_history_form(self)
+- This instance method copies the required
 information from the Game instance history attribute to a history form for
 transmission over the network.
 
@@ -35,7 +34,7 @@ ancestor of the User key, so each User could create or update a Ranking.
 
 Score:
 - total_incorrect
-  - I needed to modify this attribute to only
+- I needed to modify this attribute to only
 include incorrect guesses, not total guesses. I did not count correct guesses
 against the player.
 

@@ -158,7 +158,7 @@ class HangmanAPI(remote.Service):
         if string.join(game.board, '') == game.target:
             game.end_game(True)
             msg = string.join(game.board, '')
-            return game.to_form(msg + ' You win!')
+            return game.to_form(msg + ' ...You win!')
 
         if game.attempts_remaining < 1:
             game.end_game(False)

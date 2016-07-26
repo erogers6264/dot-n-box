@@ -85,7 +85,7 @@ class HangmanAPI(remote.Service):
                       response_message=GameForm,
                       path='game/{urlsafe_game_key}/cancel',
                       name='cancel_game',
-                      http_method='POST')
+                      http_method='DELETE')
     def cancel_game(self, request):
         """Cancel a user's active game."""
         user = User.query(User.name == request.user_name).get()
@@ -207,7 +207,7 @@ class HangmanAPI(remote.Service):
                       response_message=RankingForm,
                       path='ranking/user/{user_name}',
                       name='get_user_ranking',
-                      http_method='POST')
+                      http_method='GET')
     def get_user_ranking(self, request):
         """Returns the performance of the player as a Ranking."""
         user = User.query(User.name == request.user_name).get()

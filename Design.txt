@@ -22,7 +22,7 @@ game's history.
 - history
 - To be able to generate a history of moves for each game, this
 JsonProperty stores a list of dictionaries, with each dictionary containing
-the board, the guess, and the letters already guessed for each game.
+the board, the guess, and the letters already guessed for each move.
 
 - to_history_form(self)
 - This instance method copies the required

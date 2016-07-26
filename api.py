@@ -5,7 +5,6 @@ move game logic to another file. Ideally the API will be simple, concerned
 primarily with communication to/from the API's users."""
 
 import string
-import logging
 import endpoints
 from protorpc import remote, messages, message_types
 from google.appengine.api import memcache

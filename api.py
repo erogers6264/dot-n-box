@@ -5,6 +5,7 @@ move game logic to another file. Ideally the API will be simple, concerned
 primarily with communication to/from the API's users."""
 
 import string
+import re
 import logging
 import endpoints
 from protorpc import remote, messages, message_types
@@ -127,31 +128,43 @@ class HangmanAPI(remote.Service):
     def make_move(self, request):
         """Makes a move. Returns a game state with message"""
         game = get_by_urlsafe(request.urlsafe_game_key, Game)
+        guess = str(request.guess).lower()
+
         if game.game_over:
             return game.to_form('Game already over!')
 
-        if request.guess in game.already_guessed:
+        # Keep track of letters guessed
+        if guess in game.already_guessed:
             return game.to_form('You have already guessed these letters: {}'
                                 .format(game.already_guessed))
+        game.already_guessed.append(guess)
 
-        game.already_guessed.append(request.guess)
+        # Regex that matches only alphabetic characters.
+        p = re.compile(r"/^[A-Z]+$/i")
+
+        # Check for illegal moves.
+        if p.match(guess) is None or len(guess) > 1:
+            return game.to_form(
+                    'You must guess a single letter of the alphabet!')
+
 
         indexes_of_correct = [i for i, g in enumerate(game.target)
-                              if g == request.guess]
+                              if g == guess]
 
         if not indexes_of_correct:
             game.attempts_remaining -= 1
-            # Display the 'board' with the message
+            # Display the 'board' with the message.
             msg = string.join(game.board, '')
             msg += ' Not in word. You have {} attempts remaining.'.format(
                         game.attempts_remaining)
         else:
+            # Partially reveal the target if something was correct.
             for i in indexes_of_correct:
-                game.board[i] = request.guess
+                game.board[i] = guess
             msg = string.join(game.board, '')
             msg += ' You got one!'
 
-        game.history.append({'guess': request.guess,
+        game.history.append({'guess': guess,
                              'board': string.join(game.board, ''),
                              'already_guessed': game.already_guessed})
 

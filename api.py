@@ -222,7 +222,7 @@ class HangmanAPI(remote.Service):
 
         wins = sum(s.won == True for s in scores)
         percent_won = (float(wins)/len(scores)) * 100
-        number_of_guesses = sum(score.incorrect_guesses for score in scores)
+        number_of_guesses = sum(score.total_incorrect for score in scores)
         avg_wrong = float(number_of_guesses)/len(scores)
 
         ranking = Ranking.query(Ranking.user == user.key).get()

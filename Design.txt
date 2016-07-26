@@ -1,5 +1,5 @@
-Here are a few thoughts on the design of thisHangman API built on top of 
-he more basic Guess A Number API. In order to support a more complex game
+Here are a few thoughts on the design of this Hangman API built on top of 
+the more basic Guess A Number API. In order to support a more complex game
 flow, where the letters you've already guessed have an impact on the current
 move, it was necessary to modify some of the models. Following is a description
 of some of the major modifications:

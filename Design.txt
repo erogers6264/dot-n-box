@@ -1,58 +1,24 @@
-### Reflect on Your Design
-Document your design decisions by answering the following questions:
-   
-- What additional properties did you add to your models and why?
+Here are a few thoughts on the design decisions I made while developing this Hangman API on top of the more basic Guess A Number API. In order to support a more complex game flow, where the letters you've already guessed have an impact on the current move, it was necessary to modify some of the models. Following is a description of some of the major modifications:
+
 Game:
  - board
-   - In Guess a Number, the target was just an integer, whereas for Hangman I
-   needed a way to represent the more complex guessing of the letters of a word. 
-   Using a python list represented in the Datastore as a JsonProperty, I was 
-   able to generate single character strings with asterisks (*) representing 
-   blanks. These stars are replaced by the the API with the correct string 
-   character as the user guesses the correct letters.
+   - In Guess a Number, the target was just an integer, whereas for Hangman I needed a way to represent the more complex guessing of the letters of a word. Using a python list represented in the Datastore as a JsonProperty, I was able to generate single character strings with asterisks (*) representing blanks. These stars are replaced by the the API with the correct string character as the user guesses the correct letters.
 
  - already_guessed
-   - I needed a way to keep track of what letters were guessed for each game,
-   to make sure a user could not guess the same letter twice as well as to
-   easily generate the guesses of each 'move' as part of a game's history.
- - history
-   - To be able to generate a history of moves for each game, this JsonProperty
-   stores a list of dictionaries, with each dictionary containing the board,
-   the guess, and the letters already guessed for each game.
- - to_history_form(self)
-   - This instance method copies the required information from the Game instance
-   history attribute to a history form for transmission over the network.
+   - I needed a way to keep track of what letters were guessed for each game, to make sure a user could not guess the same letter twice as well as to easily generate the guesses of each 'move' as part of a game's history.
 
-Ranking: The ranking is a subclass of ndb.Model so it can be easily stored,
-modified and retrieved from Google Datastore. I decided to add this class
-as an ancestor of a User key, so each User could create or update a Ranking.
- - user
-   - KeyProperty which defines the ancestor relationship to the User kind
- - wins
-   - Keeps track of how many games a user has won.
- - percent_won
-   - A float indicating what percentage of games played the player has won
- - avg_wrong
-   - Stores the average number of wrong guesses across games
- - new_ranking(cls, user, wins, percent_won, avg_wrong)
-   - Class method called to construct a new ranking for a User.
- - to_form(self, message)
-   - This instance method transfers information to RankingForm for network
-   transmission
+ - history
+   - To be able to generate a history of moves for each game, this JsonProperty stores a list of dictionaries, with each dictionary containing the board, the guess, and the letters already guessed for each game.
+
+ - to_history_form(self)
+   - This instance method copies the required information from the Game instance history attribute to a history form for transmission over the network.
+
+Ranking: This is a subclass of ndb.Model so it may be easily stored, modified, and retrieved from Google Datastore. I decided to add this class as an ancestor of the User key, so each User could create or update a Ranking.
 
 Score:
  - total_incorrect
-   - I needed to modify this attribute to only include incorrect guesses, not
-   total guesses. I did not count correct guesses against the player.
+   - I needed to modify this attribute to only include incorrect guesses, not total guesses. I did not count correct guesses against the player.
 
-I wrote the following additional forms to help me extend the functionality of
-the API
-GameForms()
-RankingForm()
-RankingForms()
-HistoryForm()
+I ran into some struggles while developing some of the more complex endpoints of the API. I had some trouble writing get_user_ranking(). I tried figuring out whether ranking could somehow be a property of User, but I found that the information I wanted to synthesize with a ranking was enough of a task that I decided to create a new class with User as an ancestor. This ended up being less messy and helped me to keep my code more organized and readable.
 
-- What were some of the trade-offs or struggles you faced when implementing
-the new game logic?
-
-
+While developing the function to retrieve a game's history of moves, I figured out that there are restrictions on the field types allowed for Google's messages.Message class. They are meant to be sent efficiently across the network and handled by various programming languages. Therefore, I couldn't send a message which stored a list of already guessed letters. I decided to trade off and use a string field for that message which could be programatically decoded by a client. A functioning solution was to add a history property to game which began as an empty list. The make_move endpoint appends information about the current move to this list each time the user since a request with a guess. 

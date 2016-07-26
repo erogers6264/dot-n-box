@@ -1,6 +1,6 @@
 #Hangman Game API
 
-## Set-Up Instructions:
+##Set-Up Instructions:
 1.  Update the value of application in app.yaml to the app ID you have registered
 in the App Engine admin console and would like to use to host your instance of hangman.
 2.  Run the app with the devserver using dev_appserver.py DIR, and ensure it's
@@ -16,6 +16,12 @@ the 'board' (stars [*] represent a blank for each letter of the word), and with
 the message 'You got one!', 'Not in word!', 'game over', or 'you win!' Many different
 Hangman games can be played by many different users at any given time. Each game
 can be retrieved or played using the path parameter `urlsafe_game_key`.
+
+##Keeping Score:
+When a game ends, a score is created for the user playing that game. The score
+records how many incorrrect guesses were given, whether the player won or not,
+and the date of the game. You can view scores and high scores using the scores
+endpoints documented below.
 
 ##Files Included:
  - api.py: Contains endpoints and game playing logic.

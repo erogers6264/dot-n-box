@@ -17,7 +17,7 @@ the message 'You got one!', 'Not in word!', 'game over', or 'you win!' Many diff
 Hangman games can be played by many different users at any given time. Each game
 can be retrieved or played using the path parameter `urlsafe_game_key`.
 
-##Keeping Score:
+###Keeping Score:
 When a game ends, a score is created for the user playing that game. The score
 records how many incorrrect guesses were given, whether the player won or not,
 and the date of the game. You can view scores and high scores using the scores

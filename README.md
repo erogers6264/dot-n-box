@@ -1,6 +1,6 @@
-#Hangman Game API
+# Hangman Game API
 
-##Set-Up Instructions:
+## Set-Up Instructions:
 1.  Update the value of application in app.yaml to the app ID you have registered
 in the App Engine admin console and would like to use to host your instance of hangman.
 2.  Run the app with the devserver using dev_appserver.py DIR, and ensure it's
@@ -8,7 +8,7 @@ running by visiting the API Explorer - by default localhost:8080/_ah/api/explore
 3.  (Optional) Generate your client library(ies) with the endpoints tool. Deploy
 your application.
  
-##Game Description:
+## Game Description:
 Hangman is a guessing game. Each game begins with a random 'target' word taken
 from a list of zoo animals in wordbank.py, as well as a maximum number of
 'attempts.' A 'guess' is sent to the `make_move` endpoint which will reply with
@@ -17,13 +17,13 @@ the message 'You got one!', 'Not in word!', 'game over', or 'you win!' Many diff
 Hangman games can be played by many different users at any given time. Each game
 can be retrieved or played using the path parameter `urlsafe_game_key`.
 
-###Keeping Score:
+### Keeping Score:
 When a game ends, a score is created for the user playing that game. The score
 records how many incorrrect guesses were given, whether the player won or not,
 and the date of the game. You can view scores and high scores using the scores
 endpoints documented below.
 
-##Files Included:
+## Files Included:
  - api.py: Contains endpoints and game playing logic.
  - app.yaml: App configuration.
  - cron.yaml: Cronjob configuration.
@@ -36,7 +36,7 @@ endpoints documented below.
  - wordbank.py: Module contains a function that returns a random string for use
  as the target in a Hangman game.
 
-##Endpoints Included:
+## Endpoints Included:
  - **create_user**
     - Path: 'user'
     - Method: POST
@@ -122,7 +122,7 @@ endpoints documented below.
     - Returns: HistoryForm
     - Description: Returns a games history of moves made.
 
-##Models Included:
+## Models Included:
  - **User**
     - Stores unique user_name and (optional) email address.
     
@@ -136,7 +136,7 @@ endpoints documented below.
  - **Score**
     - Records completed games. Associated with Users model via KeyProperty.
     
-##Forms Included:
+## Forms Included:
  - **GameForm**
     - Representation of a Game's state (urlsafe_key, attempts_remaining,
     game_over flag, message, user_name).
